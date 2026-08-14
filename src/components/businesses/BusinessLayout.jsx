@@ -111,7 +111,7 @@ function BusinessLayout() {
                 }`
               }
             >
-              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white shadow-sm ring-1 ring-black/5">
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white shadow-sm ring-1 ring-[#ece8e5]">
                 <FiHelpCircle aria-hidden="true" />
               </span>
               <span>
