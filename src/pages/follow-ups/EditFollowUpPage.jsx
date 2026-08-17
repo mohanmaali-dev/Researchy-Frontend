@@ -61,11 +61,11 @@ function EditFollowUpPage() {
 
     try {
       await followUpService.updateFollowUp(id, data)
-      navigate(`/follow-ups/${id}`, {
-        state: { notice: 'Follow-up updated successfully.' },
-      })
+      navigate(`/follow-ups/${id}`)
+      return true
     } catch (requestError) {
       setError(requestError.message)
+      return false
     } finally {
       setSubmitting(false)
     }

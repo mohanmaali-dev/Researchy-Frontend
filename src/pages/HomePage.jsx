@@ -5,15 +5,15 @@ import {
   FiCheckSquare,
   FiCompass,
   FiFileText,
-  FiLogOut,
-  FiShield,
   FiUsers,
 } from 'react-icons/fi'
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext.jsx'
 import { getRecentWorkspace } from '../utils/recentWorkspace.js'
+import AccountMenu from '../components/ui/AccountMenu.jsx'
+import GlobalSearchButton from '../components/ui/GlobalSearchButton.jsx'
 
 const activeWorkAreas = [
   {
@@ -86,8 +86,7 @@ const workflowStages = [
 ]
 
 function HomePage() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const { user } = useAuth()
   const [focusQuote] = useState(
     () => focusQuotes[Math.floor(Math.random() * focusQuotes.length)],
   )
@@ -100,13 +99,9 @@ function HomePage() {
   const continueArea = activeWorkAreas.find((area) => area.name === continuePage.section) || activeWorkAreas[0]
   const ContinueIcon = continueArea.icon
 
-  const handleLogout = async () => {
-    await logout()
-    navigate('/login', { replace: true })
-  }
-
   return (
     <div className="relative isolate min-h-screen overflow-hidden bg-[#f1f0ee] text-[#252525]">
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       <div className="home-journey-bg" aria-hidden="true">
         <span className="home-journey-sweep" />
         <svg className="home-journey-mark" viewBox="0 0 1200 720" preserveAspectRatio="none">
@@ -133,7 +128,7 @@ function HomePage() {
         </svg>
       </div>
 
-      <header className="relative z-10 border-b border-[#e3e1de]/90 bg-white/90 backdrop-blur-md">
+      <header className="relative z-[90] border-b border-[#e3e1de]/90 bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:h-[68px] sm:px-8">
           <Link to="/home" className="flex items-center gap-2.5" aria-label="3V home">
             <img src="/favicon.svg" alt="" className="size-9 shrink-0 rounded-md" aria-hidden="true" />
@@ -144,28 +139,13 @@ function HomePage() {
           </Link>
 
           <div className="flex items-center gap-3">
-            <div className="hidden text-right sm:block">
-              <p className="text-sm font-medium text-[#333]">{user?.name || 'My workspace'}</p>
-              <p className="text-xs text-[#8a8a8a]">Personal workspace</p>
-            </div>
-            <span className="grid size-9 place-items-center rounded-md bg-[#efefed] text-sm font-medium text-[#555]">
-              {(user?.name || 'W').trim().charAt(0).toUpperCase()}
-            </span>
-            <Link to="/sessions" className="grid size-9 place-items-center rounded-md text-[#777] transition hover:bg-[#edf3f9] hover:text-[#315f91]" aria-label="Active sessions" title="Active sessions"><FiShield aria-hidden="true" /></Link>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="grid size-9 place-items-center rounded-md text-[#777] transition hover:bg-red-50 hover:text-red-600"
-              aria-label="Sign out"
-              title="Sign out"
-            >
-              <FiLogOut aria-hidden="true" />
-            </button>
+            <GlobalSearchButton className="size-9" />
+            <AccountMenu />
           </div>
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl flex-col justify-start px-4 py-6 sm:min-h-[calc(100vh-4.25rem)] sm:px-8 sm:py-9 lg:justify-center">
+      <main id="main-content" tabIndex="-1" className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl flex-col justify-start px-4 py-6 sm:min-h-[calc(100vh-4.25rem)] sm:px-8 sm:py-9 lg:justify-center">
         <section className="mx-auto w-full max-w-3xl text-center">
           <div className="mx-auto flex max-w-md items-center justify-center px-2" aria-label="3V workflow">
             {workflowStages.map(({ latin, action, color, dot, animation }, index) => (

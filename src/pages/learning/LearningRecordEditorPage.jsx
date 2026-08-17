@@ -74,9 +74,11 @@ function LearningRecordEditorPage({ type, mode }) {
     setError('')
     try {
       const result = mode === 'edit' ? await config.update(id, data) : await config.create(data)
-      navigate(`/learning/${config.plural}/${result.data._id}`, { state: { notice: `${config.title} ${mode === 'edit' ? 'updated' : 'created'} successfully.` } })
+      navigate(`/learning/${config.plural}/${result.data._id}`)
+      return true
     } catch (requestError) {
       setError(requestError.message)
+      return false
     } finally {
       setSubmitting(false)
     }

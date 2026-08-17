@@ -51,11 +51,11 @@ function EditConversationPage() {
 
     try {
       await conversationService.updateConversation(id, data)
-      navigate(`/conversations/${id}`, {
-        state: { notice: 'Conversation updated successfully.' },
-      })
+      navigate(`/conversations/${id}`)
+      return true
     } catch (requestError) {
       setError(requestError.message)
+      return false
     } finally {
       setSubmitting(false)
     }

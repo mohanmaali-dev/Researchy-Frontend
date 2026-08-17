@@ -86,7 +86,7 @@ function NotesPage() {
   return (
     <div className="min-h-screen bg-cream text-ink">
       <header className="border-b border-primary/15 bg-white">
-        <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
+        <nav className="mx-auto flex max-w-5xl items-center justify-between px-3 py-4 sm:px-6 sm:py-5">
           <div className="flex items-center gap-6">
             <Link to="/" className="text-xl font-bold text-primary-dark">
               TEST
@@ -96,6 +96,7 @@ function NotesPage() {
             </Link>
           </div>
           <button
+            type="button"
             onClick={logout}
             className="rounded-lg border border-primary/30 px-4 py-2 text-sm font-semibold text-primary-dark hover:bg-primary-light"
           >
@@ -104,36 +105,42 @@ function NotesPage() {
         </nav>
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 py-10">
+      <main className="mx-auto max-w-5xl px-3 py-5 sm:px-6 sm:py-10">
         <h1 className="text-3xl font-bold">My notes</h1>
         <p className="mt-2 text-slate-500">Create notes.</p>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-4 rounded-2xl border border-primary/15 bg-white p-6">
+        <form onSubmit={handleSubmit} className="mt-5 space-y-4 rounded-lg border border-primary/15 bg-white p-4 sm:mt-8 sm:p-6">
+          <label htmlFor="note-title" className="sr-only">Note title</label>
           <input
+            id="note-title"
             value={form.title}
             onChange={(event) => setForm({ ...form, title: event.target.value })}
             placeholder="Note title"
             className="w-full rounded-lg border border-slate-200 px-4 py-3 outline-none focus:border-primary"
             required
           />
+          <label htmlFor="note-content" className="sr-only">Note content</label>
           <textarea
+            id="note-content"
             value={form.content}
             onChange={(event) => setForm({ ...form, content: event.target.value })}
             placeholder="Write your note..."
             rows="4"
             className="w-full resize-none rounded-lg border border-slate-200 px-4 py-3 outline-none focus:border-primary"
           />
+          <label htmlFor="note-image" className="sr-only">Add an image</label>
           <input
+            id="note-image"
             type="file"
             accept="image/*"
             onChange={(event) => setForm({ ...form, image: event.target.files[0] || null })}
             className="block w-full text-sm text-slate-500 file:mr-4 file:rounded-lg file:border-0 file:bg-primary-light file:px-4 file:py-2 file:font-semibold file:text-primary-dark"
           />
 
-          {error && <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
+          {error && <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
 
           <div className="flex gap-3">
-            <button disabled={submitting} className="rounded-lg bg-primary px-5 py-2.5 font-semibold text-white hover:bg-primary-dark disabled:opacity-60">
+            <button type="submit" disabled={submitting} className="rounded-lg bg-primary px-5 py-2.5 font-semibold text-white hover:bg-primary-dark disabled:opacity-60">
               {submitting ? 'Saving...' : editingId ? 'Update note' : 'Create note'}
             </button>
             {editingId && <button type="button" onClick={resetForm} className="rounded-lg border border-slate-200 px-5 py-2.5 font-semibold text-slate-600">Cancel</button>}
@@ -169,12 +176,14 @@ function NotesPage() {
                       </div>
                       <div className="flex gap-4 text-sm font-semibold">
                         <button
+                          type="button"
                           onClick={() => startEditing(note)}
                           className="text-primary-dark hover:underline"
                         >
                           Edit
                         </button>
                         <button
+                          type="button"
                           onClick={() => setNoteToDelete(note)}
                           className="text-red-600 hover:underline"
                         >

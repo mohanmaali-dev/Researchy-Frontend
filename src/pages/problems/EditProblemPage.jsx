@@ -65,11 +65,11 @@ function EditProblemPage() {
 
     try {
       await problemService.updateProblem(id, data)
-      navigate(`/problems/${id}`, {
-        state: { notice: 'Problem updated successfully.' },
-      })
+      navigate(`/problems/${id}`)
+      return true
     } catch (requestError) {
       setError(requestError.message)
+      return false
     } finally {
       setSubmitting(false)
     }

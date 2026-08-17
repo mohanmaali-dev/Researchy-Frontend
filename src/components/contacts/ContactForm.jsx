@@ -6,7 +6,10 @@ import { Link } from 'react-router-dom'
 import { z } from 'zod'
 
 import DateInput from '../ui/DateInput.jsx'
+import DraftStatus from '../ui/DraftStatus.jsx'
+import { FieldError, FORM_INPUT_CLASS, ServerError } from '../ui/FormElements.jsx'
 import FormSelect from '../ui/FormSelect.jsx'
+import { useFormDraft } from '../../hooks/useFormDraft.js'
 import { CONTACT_TYPES } from './contact.constants.js'
 
 const CONTACT_STATUSES = ['Active', 'Inactive']
@@ -53,12 +56,7 @@ const EMPTY_CONTACT = {
   status: 'Active',
 }
 
-const inputClassName =
-  'mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/10'
-
-function FieldError({ message }) {
-  return message ? <p className="mt-1.5 text-xs font-normal leading-5 text-red-500">{message}</p> : null
-}
+const inputClassName = FORM_INPUT_CLASS
 
 function SectionHeading({ title, description }) {
   return (
@@ -83,22 +81,25 @@ function ContactForm({
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm({ resolver: zodResolver(contactSchema), defaultValues: initialValues })
 
   useEffect(() => {
     reset(initialValues)
   }, [initialValues, reset])
+  const draft = useFormDraft({ watch, reset, initialValues })
 
   const handleBusinessChange = (businessId) => {
     const selectedBusiness = businesses.find((business) => business._id === businessId)
     if (selectedBusiness) setValue('companyName', selectedBusiness.companyName, { shouldValidate: true })
   }
 
-  const submitValues = (values) => onSubmit({ ...values, business: values.business || null })
+  const submitValues = draft.submitWithDraft((values) => onSubmit({ ...values, business: values.business || null }))
 
   return (
     <form onSubmit={handleSubmit(submitValues)} noValidate className="space-y-3">
+      <DraftStatus {...draft} />
       <section className="rounded-lg bg-white p-4 sm:p-6">
         <SectionHeading title="Basic information" description="Only the contact name is required." />
         <div className="grid gap-4 sm:grid-cols-2">
@@ -199,9 +200,7 @@ function ContactForm({
         </label>
       </section>
 
-      {serverError && (
-        <p role="alert" className="rounded-md bg-red-50 px-4 py-3 text-sm font-normal text-red-600">{serverError}</p>
-      )}
+      <ServerError message={serverError} />
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Link to={cancelTo} className="rounded-md bg-white px-5 py-2.5 text-center text-sm font-semibold text-[#555] transition hover:bg-[#f5f5f5]">Cancel</Link>

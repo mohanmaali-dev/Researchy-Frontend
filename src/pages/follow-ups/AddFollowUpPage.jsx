@@ -63,11 +63,11 @@ function AddFollowUpPage() {
 
     try {
       const result = await followUpService.createFollowUp(data)
-      navigate(`/follow-ups/${result.data._id}`, {
-        state: { notice: 'Follow-up created successfully.' },
-      })
+      navigate(`/follow-ups/${result.data._id}`)
+      return true
     } catch (requestError) {
       setError(requestError.message)
+      return false
     } finally {
       setSubmitting(false)
     }

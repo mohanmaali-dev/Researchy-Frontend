@@ -21,9 +21,11 @@ function AddContactPage() {
     setError('')
     try {
       const result = await contactService.createContact(data)
-      navigate(`/contacts/${result.data._id}`, { state: { notice: 'Contact created successfully.' } })
+      navigate(`/contacts/${result.data._id}`)
+      return true
     } catch (requestError) {
       setError(requestError.message)
+      return false
     } finally {
       setSubmitting(false)
     }

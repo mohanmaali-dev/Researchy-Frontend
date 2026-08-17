@@ -6,6 +6,9 @@ import { Link } from 'react-router-dom'
 import { z } from 'zod'
 
 import FormSelect from '../ui/FormSelect.jsx'
+import DraftStatus from '../ui/DraftStatus.jsx'
+import { FieldError, FORM_INPUT_CLASS, ServerError } from '../ui/FormElements.jsx'
+import { useFormDraft } from '../../hooks/useFormDraft.js'
 import TagInput from './TagInput.jsx'
 
 const WILLINGNESS_OPTIONS = ['Yes', 'No', 'Unknown']
@@ -44,12 +47,7 @@ const EMPTY_PROBLEM = {
   tags: [],
 }
 
-const inputClassName =
-  'mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/10'
-
-function FieldError({ message }) {
-  return message ? <p className="mt-1.5 text-xs font-normal leading-5 text-red-500">{message}</p> : null
-}
+const inputClassName = FORM_INPUT_CLASS
 
 function ProblemForm({
   businessName,
@@ -65,6 +63,7 @@ function ProblemForm({
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(problemSchema),
@@ -74,9 +73,11 @@ function ProblemForm({
   useEffect(() => {
     reset(initialValues)
   }, [initialValues, reset])
+  const draft = useFormDraft({ watch, reset, initialValues })
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-8">
+    <form onSubmit={handleSubmit(draft.submitWithDraft(onSubmit))} noValidate className="space-y-8">
+      <DraftStatus {...draft} />
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="flex items-center gap-3 rounded-xl bg-primary-light p-4 text-primary-dark">
@@ -231,11 +232,7 @@ function ProblemForm({
         </div>
       </section>
 
-      {serverError && (
-        <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {serverError}
-        </p>
-      )}
+      <ServerError message={serverError} />
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <Link

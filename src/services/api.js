@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+import { notify } from '../utils/toast.js'
+
 const ACCESS_TOKEN_KEY = 'enter_manage_access_token'
 const REFRESH_TOKEN_KEY = 'enter_manage_refresh_token'
 const API_CACHE_PREFIX = 'enter_manage_api_cache_'
@@ -61,6 +63,8 @@ const clearCachedResponses = () => {
     // Cache cleanup is best effort when browser storage is restricted.
   }
 }
+
+export const clearApiCache = clearCachedResponses
 
 export const storeAuthTokens = ({ accessToken, refreshToken } = {}) => {
   try {
@@ -149,18 +153,38 @@ api.interceptors.response.use(
 )
 
 export const request = async (method, url, data, config = {}) => {
+  const normalizedMethod = method.toLowerCase()
+  const isReadRequest = normalizedMethod === 'get'
+  const {
+    successFeedback = !isReadRequest && !url.startsWith('/auth/'),
+    errorFeedback = false,
+    successMessage,
+    ...axiosConfig
+  } = config
+
   try {
-    const response = await api({ method, url, data, ...config })
-    if (method.toLowerCase() === 'get') storeCachedResponse(url, response.data)
+    const response = await api({ method, url, data, ...axiosConfig })
+    if (isReadRequest) {
+      storeCachedResponse(url, response.data)
+    } else {
+      clearCachedResponses()
+      if (successFeedback) {
+        notify(successMessage || response.data?.message || 'Changes saved successfully.')
+      }
+    }
     return response.data
   } catch (error) {
-    if (method.toLowerCase() === 'get' && !error.response) {
+    if (isReadRequest && !error.response) {
       const cached = readCachedResponse(url)
       if (cached) return cached
     }
     if (!error.response && typeof navigator !== 'undefined' && !navigator.onLine) {
-      throw new Error('You are offline. Connect to the internet to complete this action')
+      const offlineError = new Error('You are offline. Connect to the internet to complete this action')
+      if (errorFeedback) notify(offlineError.message, 'error')
+      throw offlineError
     }
-    throw new Error(error.response?.data?.message || 'Something went wrong')
+    const requestError = new Error(error.response?.data?.message || 'Something went wrong. Please try again.')
+    if (errorFeedback) notify(requestError.message, 'error')
+    throw requestError
   }
 }

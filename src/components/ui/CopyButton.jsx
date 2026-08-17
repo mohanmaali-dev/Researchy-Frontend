@@ -44,7 +44,7 @@ function CopyButton({ value, label = 'Copy', showLabel = false, className = '' }
       type="button"
       onClick={handleCopy}
       disabled={!value}
-      className={`inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md text-xs font-medium transition disabled:opacity-40 ${copied ? 'text-emerald-700' : 'text-[#777] hover:bg-[#efedeb] hover:text-[#333]'} ${className}`}
+      className={`inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md text-xs font-medium transition disabled:opacity-40 max-sm:min-h-10 max-sm:min-w-10 ${copied ? 'text-emerald-700' : 'text-[#777] hover:bg-[#efedeb] hover:text-[#333]'} ${className}`}
       aria-label={copied ? 'Copied' : label}
       title={copied ? 'Copied' : label}
     >

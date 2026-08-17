@@ -57,9 +57,11 @@ function EditContactPage() {
     setError('')
     try {
       await contactService.updateContact(id, data)
-      navigate(`/contacts/${id}`, { state: { notice: 'Contact updated successfully.' } })
+      navigate(`/contacts/${id}`)
+      return true
     } catch (requestError) {
       setError(requestError.message)
+      return false
     } finally {
       setSubmitting(false)
     }

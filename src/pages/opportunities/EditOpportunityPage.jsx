@@ -51,11 +51,11 @@ function EditOpportunityPage() {
 
     try {
       await opportunityService.updateOpportunity(id, data)
-      navigate(`/opportunities/${id}`, {
-        state: { notice: 'Opportunity updated and score recalculated.' },
-      })
+      navigate(`/opportunities/${id}`)
+      return true
     } catch (requestError) {
       setError(requestError.message)
+      return false
     } finally {
       setSubmitting(false)
     }

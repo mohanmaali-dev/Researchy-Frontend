@@ -61,11 +61,11 @@ function EditBusinessPage() {
 
     try {
       await businessService.updateBusiness(id, data)
-      navigate(`/businesses/${id}`, {
-        state: { notice: 'Business updated successfully.' },
-      })
+      navigate(`/businesses/${id}`)
+      return true
     } catch (requestError) {
       setError(requestError.message)
+      return false
     } finally {
       setSubmitting(false)
     }

@@ -34,11 +34,11 @@ function AddBusinessPage() {
 
     try {
       const result = await businessService.createBusiness(data)
-      navigate(`/businesses/${result.data._id}`, {
-        state: { notice: 'Business created successfully.' },
-      })
+      navigate(`/businesses/${result.data._id}`)
+      return true
     } catch (requestError) {
       setError(requestError.message)
+      return false
     } finally {
       setSubmitting(false)
     }

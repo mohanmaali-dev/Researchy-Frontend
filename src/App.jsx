@@ -1,70 +1,114 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Navigate,
+  Outlet,
+  Route,
+  RouterProvider,
+} from 'react-router-dom'
 
-import AuthLayout from './components/AuthLayout.jsx'
-import BusinessLayout from './components/businesses/BusinessLayout.jsx'
-import ContactsLayout from './components/contacts/ContactsLayout.jsx'
-import LearningLayout from './components/learning/LearningLayout.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
+import GlobalErrorBoundary from './components/ui/GlobalErrorBoundary.jsx'
+import NavigationFeedback from './components/ui/NavigationFeedback.jsx'
+import RouteErrorRecovery from './components/ui/RouteErrorRecovery.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
-import CheckEmailPage from './pages/auth/CheckEmailPage.jsx'
-import ForgotPasswordPage from './pages/auth/ForgotPasswordPage.jsx'
-import LoginPage from './pages/auth/LoginPage.jsx'
-import RegisterPage from './pages/auth/RegisterPage.jsx'
-import ResetPasswordPage from './pages/auth/ResetPasswordPage.jsx'
-import VerifyEmailPage from './pages/auth/VerifyEmailPage.jsx'
-import DashboardPage from './pages/DashboardPage.jsx'
-import DemoDataPage from './pages/DemoDataPage.jsx'
-import HowItWorksPage from './pages/HowItWorksPage.jsx'
-import HomePage from './pages/HomePage.jsx'
-import NotesPage from './pages/NotesPage.jsx'
-import SessionsPage from './pages/SessionsPage.jsx'
-import AddBusinessPage from './pages/businesses/AddBusinessPage.jsx'
-import BusinessDetailsPage from './pages/businesses/BusinessDetailsPage.jsx'
-import BusinessListPage from './pages/businesses/BusinessListPage.jsx'
-import EditBusinessPage from './pages/businesses/EditBusinessPage.jsx'
-import AddConversationPage from './pages/conversations/AddConversationPage.jsx'
-import ConversationDetailsPage from './pages/conversations/ConversationDetailsPage.jsx'
-import EditConversationPage from './pages/conversations/EditConversationPage.jsx'
-import AddContactPage from './pages/contacts/AddContactPage.jsx'
-import ContactDemoDataPage from './pages/contacts/ContactDemoDataPage.jsx'
-import ContactDetailsPage from './pages/contacts/ContactDetailsPage.jsx'
-import ContactListPage from './pages/contacts/ContactListPage.jsx'
-import EditContactPage from './pages/contacts/EditContactPage.jsx'
-import KeyTakeawaysPage from './pages/learning/KeyTakeawaysPage.jsx'
-import ArchivedTopicsPage from './pages/learning/ArchivedTopicsPage.jsx'
-import LearningCollectionPage from './pages/learning/LearningCollectionPage.jsx'
-import LearningDashboardPage from './pages/learning/LearningDashboardPage.jsx'
-import LearningDemoDataPage from './pages/learning/LearningDemoDataPage.jsx'
-import LearningRecordDetailsPage from './pages/learning/LearningRecordDetailsPage.jsx'
-import LearningRecordEditorPage from './pages/learning/LearningRecordEditorPage.jsx'
-import TopicDetailsPage from './pages/learning/TopicDetailsPage.jsx'
-import TopicEditorPage from './pages/learning/TopicEditorPage.jsx'
-import TopicListPage from './pages/learning/TopicListPage.jsx'
-import AddFollowUpPage from './pages/follow-ups/AddFollowUpPage.jsx'
-import EditFollowUpPage from './pages/follow-ups/EditFollowUpPage.jsx'
-import FollowUpDetailsPage from './pages/follow-ups/FollowUpDetailsPage.jsx'
-import FollowUpListPage from './pages/follow-ups/FollowUpListPage.jsx'
-import AddOpportunityPage from './pages/opportunities/AddOpportunityPage.jsx'
-import EditOpportunityPage from './pages/opportunities/EditOpportunityPage.jsx'
-import OpportunityDetailsPage from './pages/opportunities/OpportunityDetailsPage.jsx'
-import OpportunityListPage from './pages/opportunities/OpportunityListPage.jsx'
-import AddProblemPage from './pages/problems/AddProblemPage.jsx'
-import EditProblemPage from './pages/problems/EditProblemPage.jsx'
-import ProblemDetailsPage from './pages/problems/ProblemDetailsPage.jsx'
-import ProblemPatternDetailsPage from './pages/problems/ProblemPatternDetailsPage.jsx'
-import ProblemPatternsPage from './pages/problems/ProblemPatternsPage.jsx'
+import { ToastProvider } from './context/ToastContext.jsx'
 
-function App() {
+const AuthLayout = lazy(() => import('./components/AuthLayout.jsx'))
+const BusinessLayout = lazy(() => import('./components/businesses/BusinessLayout.jsx'))
+const ContactsLayout = lazy(() => import('./components/contacts/ContactsLayout.jsx'))
+const LearningLayout = lazy(() => import('./components/learning/LearningLayout.jsx'))
+const CheckEmailPage = lazy(() => import('./pages/auth/CheckEmailPage.jsx'))
+const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPasswordPage.jsx'))
+const LoginPage = lazy(() => import('./pages/auth/LoginPage.jsx'))
+const RegisterPage = lazy(() => import('./pages/auth/RegisterPage.jsx'))
+const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage.jsx'))
+const VerifyEmailPage = lazy(() => import('./pages/auth/VerifyEmailPage.jsx'))
+const DashboardPage = lazy(() => import('./pages/DashboardPage.jsx'))
+const DataSettingsPage = lazy(() => import('./pages/DataSettingsPage.jsx'))
+const DemoDataPage = lazy(() => import('./pages/DemoDataPage.jsx'))
+const HowItWorksPage = lazy(() => import('./pages/HowItWorksPage.jsx'))
+const HomePage = lazy(() => import('./pages/HomePage.jsx'))
+const NotesPage = lazy(() => import('./pages/NotesPage.jsx'))
+const SessionsPage = lazy(() => import('./pages/SessionsPage.jsx'))
+const AddBusinessPage = lazy(() => import('./pages/businesses/AddBusinessPage.jsx'))
+const BusinessDetailsPage = lazy(() => import('./pages/businesses/BusinessDetailsPage.jsx'))
+const BusinessListPage = lazy(() => import('./pages/businesses/BusinessListPage.jsx'))
+const EditBusinessPage = lazy(() => import('./pages/businesses/EditBusinessPage.jsx'))
+const AddConversationPage = lazy(() => import('./pages/conversations/AddConversationPage.jsx'))
+const ConversationDetailsPage = lazy(() => import('./pages/conversations/ConversationDetailsPage.jsx'))
+const EditConversationPage = lazy(() => import('./pages/conversations/EditConversationPage.jsx'))
+const AddContactPage = lazy(() => import('./pages/contacts/AddContactPage.jsx'))
+const ContactDemoDataPage = lazy(() => import('./pages/contacts/ContactDemoDataPage.jsx'))
+const ContactDetailsPage = lazy(() => import('./pages/contacts/ContactDetailsPage.jsx'))
+const ContactListPage = lazy(() => import('./pages/contacts/ContactListPage.jsx'))
+const EditContactPage = lazy(() => import('./pages/contacts/EditContactPage.jsx'))
+const KeyTakeawaysPage = lazy(() => import('./pages/learning/KeyTakeawaysPage.jsx'))
+const ArchivedTopicsPage = lazy(() => import('./pages/learning/ArchivedTopicsPage.jsx'))
+const LearningCollectionPage = lazy(() => import('./pages/learning/LearningCollectionPage.jsx'))
+const LearningDashboardPage = lazy(() => import('./pages/learning/LearningDashboardPage.jsx'))
+const LearningDemoDataPage = lazy(() => import('./pages/learning/LearningDemoDataPage.jsx'))
+const LearningRecordDetailsPage = lazy(() => import('./pages/learning/LearningRecordDetailsPage.jsx'))
+const LearningRecordEditorPage = lazy(() => import('./pages/learning/LearningRecordEditorPage.jsx'))
+const TopicDetailsPage = lazy(() => import('./pages/learning/TopicDetailsPage.jsx'))
+const TopicEditorPage = lazy(() => import('./pages/learning/TopicEditorPage.jsx'))
+const TopicListPage = lazy(() => import('./pages/learning/TopicListPage.jsx'))
+const AddFollowUpPage = lazy(() => import('./pages/follow-ups/AddFollowUpPage.jsx'))
+const EditFollowUpPage = lazy(() => import('./pages/follow-ups/EditFollowUpPage.jsx'))
+const FollowUpDetailsPage = lazy(() => import('./pages/follow-ups/FollowUpDetailsPage.jsx'))
+const FollowUpListPage = lazy(() => import('./pages/follow-ups/FollowUpListPage.jsx'))
+const AddOpportunityPage = lazy(() => import('./pages/opportunities/AddOpportunityPage.jsx'))
+const EditOpportunityPage = lazy(() => import('./pages/opportunities/EditOpportunityPage.jsx'))
+const OpportunityDetailsPage = lazy(() => import('./pages/opportunities/OpportunityDetailsPage.jsx'))
+const OpportunityListPage = lazy(() => import('./pages/opportunities/OpportunityListPage.jsx'))
+const AddProblemPage = lazy(() => import('./pages/problems/AddProblemPage.jsx'))
+const EditProblemPage = lazy(() => import('./pages/problems/EditProblemPage.jsx'))
+const ProblemDetailsPage = lazy(() => import('./pages/problems/ProblemDetailsPage.jsx'))
+const ProblemPatternDetailsPage = lazy(() => import('./pages/problems/ProblemPatternDetailsPage.jsx'))
+const ProblemPatternsPage = lazy(() => import('./pages/problems/ProblemPatternsPage.jsx'))
+
+function RouteLoading() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
+    <div className="min-h-screen bg-[#f2f2f1] p-2.5 sm:p-4" role="status">
+      <span className="sr-only">Opening page</span>
+      <div className="h-18 animate-pulse rounded-[10px] bg-white motion-reduce:animate-none" />
+      <div className="mt-3 grid gap-3 lg:grid-cols-[16rem_minmax(0,1fr)]">
+        <div className="hidden h-[calc(100vh-7rem)] animate-pulse rounded-[10px] bg-white motion-reduce:animate-none lg:block" />
+        <div className="min-w-0 animate-pulse space-y-3 motion-reduce:animate-none">
+          <div className="h-36 rounded-[10px] bg-white" />
+          <div className="h-64 rounded-[10px] bg-white" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AppProviders() {
+  return (
+    <AuthProvider>
+      <ToastProvider>
+        <NavigationFeedback />
+        <GlobalErrorBoundary>
+        <Suspense fallback={<RouteLoading />}>
+          <Outlet />
+        </Suspense>
+        </GlobalErrorBoundary>
+      </ToastProvider>
+    </AuthProvider>
+  )
+}
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route element={<AppProviders />} errorElement={<RouteErrorRecovery />}>
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/check-email" element={<CheckEmailPage />} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<HomePage />} />
             <Route path="/sessions" element={<SessionsPage />} />
+            <Route path="/settings/data" element={<DataSettingsPage />} />
 
             <Route element={<BusinessLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
@@ -152,9 +196,13 @@ function App() {
             <Route path="/verify-email" element={<VerifyEmailPage />} />
           </Route>
 
-        </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+    </Route>,
+  ),
+)
+
+function App() {
+  return (
+    <RouterProvider router={router} fallbackElement={<RouteLoading />} />
   )
 }
 

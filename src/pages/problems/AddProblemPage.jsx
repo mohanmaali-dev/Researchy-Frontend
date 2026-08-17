@@ -51,11 +51,11 @@ function AddProblemPage() {
         business: conversation.business._id,
         conversation: conversationId,
       })
-      navigate(`/problems/${result.data._id}`, {
-        state: { notice: 'Problem created successfully.' },
-      })
+      navigate(`/problems/${result.data._id}`)
+      return true
     } catch (requestError) {
       setError(requestError.message)
+      return false
     } finally {
       setSubmitting(false)
     }

@@ -6,7 +6,10 @@ import { Link } from 'react-router-dom'
 import { z } from 'zod'
 
 import DateInput from '../ui/DateInput.jsx'
+import DraftStatus from '../ui/DraftStatus.jsx'
+import { FieldError as ErrorText, FORM_INPUT_CLASS, ServerError } from '../ui/FormElements.jsx'
 import FormSelect from '../ui/FormSelect.jsx'
+import { useFormDraft } from '../../hooks/useFormDraft.js'
 import { parseTags, todayValue, TOPIC_PRIORITIES, TOPIC_STATUSES } from './learning.constants.js'
 
 const schema = z.object({
@@ -22,13 +25,13 @@ const schema = z.object({
 })
 
 const emptyTopic = { title: '', category: '', description: '', learningReason: '', priority: 'Medium', status: 'Want to Learn', startDate: todayValue(), targetDate: '', tags: '' }
-const inputClass = 'mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-3 focus:ring-primary/10'
-const ErrorText = ({ message }) => message ? <p className="mt-1.5 text-xs font-normal text-red-500">{message}</p> : null
+const inputClass = FORM_INPUT_CLASS
 
 function TopicForm({ initialValues = emptyTopic, categorySuggestions = [], tagSuggestions = [], onSubmit, submitting, serverError, cancelTo = '/learning/topics' }) {
   const { register, control, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm({ resolver: zodResolver(schema), defaultValues: initialValues })
   useEffect(() => reset(initialValues), [initialValues, reset])
-  const submit = (values) => onSubmit({ ...values, targetDate: values.targetDate || null, tags: parseTags(values.tags) })
+  const draft = useFormDraft({ watch, reset, initialValues })
+  const submit = draft.submitWithDraft((values) => onSubmit({ ...values, targetDate: values.targetDate || null, tags: parseTags(values.tags) }))
   const currentTags = watch('tags') || ''
   const addSuggestedTag = (tag) => {
     const next = [...new Set([...parseTags(currentTags), tag])]
@@ -37,6 +40,7 @@ function TopicForm({ initialValues = emptyTopic, categorySuggestions = [], tagSu
 
   return (
     <form onSubmit={handleSubmit(submit)} noValidate className="space-y-3">
+      <DraftStatus {...draft} />
       <section className="rounded-lg bg-white p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-[#292929]">Topic information</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -57,7 +61,7 @@ function TopicForm({ initialValues = emptyTopic, categorySuggestions = [], tagSu
           <label className="text-sm font-semibold text-[#555]">Target date <span className="font-normal text-[#999]">(optional)</span><DateInput {...register('targetDate')} className={inputClass} /></label>
         </div>
       </section>
-      {serverError && <p role="alert" className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-600">{serverError}</p>}
+      <ServerError message={serverError} />
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"><Link to={cancelTo} className="rounded-md bg-white px-5 py-2.5 text-center text-sm font-semibold text-[#555] hover:bg-[#f5f5f5]">Cancel</Link><button type="submit" disabled={submitting} className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-dark disabled:opacity-60"><FiSave aria-hidden="true" /> {submitting ? 'Saving...' : 'Save topic'}</button></div>
     </form>
   )

@@ -48,11 +48,11 @@ function AddOpportunityPage() {
 
     try {
       const result = await opportunityService.createOpportunity({ ...data, problem: problemId })
-      navigate(`/opportunities/${result.data._id}`, {
-        state: { notice: 'Opportunity created and scored successfully.' },
-      })
+      navigate(`/opportunities/${result.data._id}`)
+      return true
     } catch (requestError) {
       setError(requestError.message)
+      return false
     } finally {
       setSubmitting(false)
     }

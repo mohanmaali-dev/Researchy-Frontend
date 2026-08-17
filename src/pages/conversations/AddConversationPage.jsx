@@ -42,11 +42,11 @@ function AddConversationPage() {
         ...data,
         business: businessId,
       })
-      navigate(`/conversations/${result.data._id}`, {
-        state: { notice: 'Conversation created successfully.' },
-      })
+      navigate(`/conversations/${result.data._id}`)
+      return true
     } catch (requestError) {
       setError(requestError.message)
+      return false
     } finally {
       setSubmitting(false)
     }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { useController } from 'react-hook-form'
 import { FiCheck, FiChevronDown, FiPlus, FiSearch } from 'react-icons/fi'
 
@@ -20,6 +20,7 @@ function CreatableSelect({
   const rootRef = useRef(null)
   const buttonRef = useRef(null)
   const searchRef = useRef(null)
+  const listboxId = useId()
 
   const uniqueOptions = useMemo(() => {
     const values = new Map()
@@ -102,12 +103,14 @@ function CreatableSelect({
         disabled={disabled}
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-controls={listboxId}
+        aria-label={name.replace(/([A-Z])/g, ' $1').replace(/^./, (letter) => letter.toUpperCase())}
         onBlur={field.onBlur}
         onClick={() => {
           setOpen((current) => !current)
           setQuery('')
         }}
-        className={`flex min-h-12 w-full items-center justify-between gap-3 rounded-[14px] border px-4 py-3 text-left text-sm outline-none transition ${
+        className={`flex min-h-12 w-full items-center justify-between gap-3 rounded-md border px-4 py-3 text-left text-sm outline-none transition ${
           open
             ? 'border-primary bg-white ring-4 ring-primary/10'
             : 'border-[#e5e5e5] bg-[#f7f7f7] hover:border-[#d5d5d5] hover:bg-[#fafafa]'
@@ -123,7 +126,7 @@ function CreatableSelect({
       </button>
 
       <div
-        className={`absolute z-50 mt-2 w-full origin-top overflow-hidden rounded-[16px] border border-[#e5e5e5] bg-white p-2 shadow-[0_18px_50px_rgba(0,0,0,0.14)] transition duration-150 ${
+        className={`absolute z-50 mt-2 w-full origin-top overflow-hidden rounded-lg border border-[#e5e5e5] bg-white p-2 shadow-[0_18px_50px_rgba(0,0,0,0.14)] transition duration-150 ${
           open
             ? 'visible translate-y-0 scale-100 opacity-100'
             : 'invisible -translate-y-1 scale-[0.98] opacity-0'
@@ -140,11 +143,12 @@ function CreatableSelect({
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={handleSearchKeyDown}
             placeholder={searchPlaceholder}
-            className="w-full rounded-xl border border-[#e5e5e5] bg-[#f7f7f7] py-2.5 pl-10 pr-3 text-sm font-normal text-[#171717] outline-none transition placeholder:text-[#999] focus:border-primary focus:bg-white focus:ring-3 focus:ring-primary/10"
+            aria-label={searchPlaceholder}
+            className="w-full rounded-md border border-[#e5e5e5] bg-[#f7f7f7] py-2.5 pl-10 pr-3 text-sm font-normal text-[#171717] outline-none transition placeholder:text-[#999] focus:border-primary focus:bg-white focus:ring-3 focus:ring-primary/10"
           />
         </div>
 
-        <div role="listbox" aria-label={name} className="max-h-56 overflow-y-auto">
+        <div id={listboxId} role="listbox" aria-label={name.replace(/([A-Z])/g, ' $1')} className="max-h-56 overflow-y-auto">
           {filteredOptions.map((option) => {
             const selected = normalizeValue(option) === normalizeValue(String(field.value ?? ''))
 
@@ -155,7 +159,7 @@ function CreatableSelect({
                 role="option"
                 aria-selected={selected}
                 onClick={() => selectValue(option)}
-                className={`flex w-full items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 text-left text-sm font-normal transition ${
+                className={`flex w-full items-center justify-between gap-3 rounded-md px-3.5 py-2.5 text-left text-sm font-normal transition ${
                   selected
                     ? 'bg-primary-light text-primary-dark ring-1 ring-inset ring-primary/10'
                     : 'text-[#333] hover:bg-[#f6f6f6]'
@@ -171,7 +175,7 @@ function CreatableSelect({
             <button
               type="button"
               onClick={() => selectValue(cleanedQuery)}
-              className="mt-1 flex w-full items-center gap-2 rounded-xl bg-primary-light px-3.5 py-2.5 text-left text-sm font-normal text-primary-dark transition hover:bg-[#ffebe5]"
+              className="mt-1 flex w-full items-center gap-2 rounded-md bg-primary-light px-3.5 py-2.5 text-left text-sm font-normal text-primary-dark transition hover:bg-[#ffebe5]"
             >
               <FiPlus className="shrink-0" aria-hidden="true" />
               <span className="truncate">Add “{cleanedQuery}”</span>

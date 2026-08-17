@@ -7,6 +7,9 @@ import { z } from 'zod'
 
 import ProblemTags from '../problems/ProblemTags.jsx'
 import FormSelect from '../ui/FormSelect.jsx'
+import DraftStatus from '../ui/DraftStatus.jsx'
+import { FieldError, FORM_INPUT_CLASS, ServerError } from '../ui/FormElements.jsx'
+import { useFormDraft } from '../../hooks/useFormDraft.js'
 
 const VALIDATION_STATUSES = ['Not Validated', 'Researching', 'Validated', 'Rejected']
 const OPPORTUNITY_STATUSES = ['Active', 'On Hold', 'Closed']
@@ -33,12 +36,7 @@ const EMPTY_OPPORTUNITY = {
   status: 'Active',
 }
 
-const inputClassName =
-  'mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/10'
-
-function FieldError({ message }) {
-  return message ? <p className="mt-1.5 text-xs font-normal leading-5 text-red-500">{message}</p> : null
-}
+const inputClassName = FORM_INPUT_CLASS
 
 function OpportunityForm({
   problem,
@@ -53,6 +51,7 @@ function OpportunityForm({
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(opportunitySchema),
@@ -62,9 +61,11 @@ function OpportunityForm({
   useEffect(() => {
     reset(initialValues)
   }, [initialValues, reset])
+  const draft = useFormDraft({ watch, reset, initialValues })
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-8">
+    <form onSubmit={handleSubmit(draft.submitWithDraft(onSubmit))} noValidate className="space-y-8">
+      <DraftStatus {...draft} />
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
         <p className="text-xs font-semibold uppercase tracking-wide text-primary-dark">Linked Problem</p>
         <h2 className="mt-1 text-xl font-bold">{problem.title}</h2>
@@ -147,9 +148,7 @@ function OpportunityForm({
         <p>The 0–100 score is calculated automatically from the linked Problem, repeated demand, and selected difficulty. It is a prioritization aid only.</p>
       </div>
 
-      {serverError && (
-        <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{serverError}</p>
-      )}
+      <ServerError message={serverError} />
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <Link to={cancelTo} className="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-center text-sm font-semibold text-slate-700 hover:bg-slate-50">
