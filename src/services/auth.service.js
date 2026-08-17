@@ -1,14 +1,26 @@
-import { request } from './api.js'
+import { clearAuthTokens, getRefreshToken, request, storeAuthTokens } from './api.js'
 
-export const register = (data) => request('post', '/auth/register', data)
+const saveSession = async (operation) => {
+  const result = await operation
+  storeAuthTokens(result.meta)
+  return result
+}
 
-export const login = (data) => request('post', '/auth/login', data)
+export const register = (data) => saveSession(request('post', '/auth/register', data))
 
-export const logout = () => request('post', '/auth/logout')
+export const login = (data) => saveSession(request('post', '/auth/login', data))
+
+export const logout = async () => {
+  try {
+    return await request('post', '/auth/logout', { refreshToken: getRefreshToken() })
+  } finally {
+    clearAuthTokens()
+  }
+}
 
 export const getCurrentUser = () => request('get', '/auth/me')
 
-export const refreshSession = () => request('post', '/auth/refresh')
+export const refreshSession = () => saveSession(request('post', '/auth/refresh', { refreshToken: getRefreshToken() }))
 
 export const forgotPassword = (email) =>
   request('post', '/auth/forgot-password', { email })
