@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { FiArrowRight, FiBriefcase, FiStar, FiTrendingUp } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 
-import { ErrorState, LoadingState } from '../../components/businesses/PageState.jsx'
+import { ErrorState, TableLoadingState } from '../../components/businesses/PageState.jsx'
 import { ScoreBadge, ValidationBadge } from '../../components/opportunities/OpportunityBadges.jsx'
 import * as opportunityService from '../../services/opportunity.service.js'
 
@@ -62,7 +62,13 @@ function OpportunityListPage() {
 
       <section className="mt-3 rounded-lg bg-white p-4 sm:p-6">
         {loading ? (
-          <LoadingState label="Loading opportunities..." />
+          <TableLoadingState
+            label="Loading opportunities..."
+            headers={['Opportunity / Problem', 'Business', 'Score', 'Validation', 'Difficulty', 'Created', '']}
+            template="1.7fr 1.2fr .65fr 1.05fr .75fr 1fr 2rem"
+            minWidth="850px"
+            cellVariants={['line', 'line', 'pill', 'pill', 'line', 'line', 'icon']}
+          />
         ) : error ? (
           <ErrorState message={error} onRetry={loadOpportunities} />
         ) : opportunities.length === 0 ? (

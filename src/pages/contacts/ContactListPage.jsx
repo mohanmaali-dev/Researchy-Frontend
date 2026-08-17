@@ -4,7 +4,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 
 import { CONTACT_TYPES } from '../../components/contacts/contact.constants.js'
 import ContactStatusBadge from '../../components/contacts/ContactStatusBadge.jsx'
-import { ErrorState, LoadingState } from '../../components/businesses/PageState.jsx'
+import { ErrorState, TableLoadingState } from '../../components/businesses/PageState.jsx'
 import CopyButton from '../../components/ui/CopyButton.jsx'
 import * as contactService from '../../services/contact.service.js'
 
@@ -122,7 +122,14 @@ function ContactListPage() {
       <section className="mt-3 rounded-lg bg-white p-4 sm:p-6">
         {error && contacts.length > 0 && <p role="alert" className="mb-4 rounded-md bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>}
         {loading ? (
-          <LoadingState label="Loading contacts..." />
+          <TableLoadingState
+            label="Loading contacts..."
+            headers={['Name', 'Email', 'Company', 'Role', 'Contact type', 'Phone', 'Last contacted']}
+            template="1.35fr 1.6fr 1.35fr .8fr 1.1fr 1.2fr .8fr"
+            minWidth="1050px"
+            desktopClassName="hidden lg:block"
+            mobileClassName="space-y-3 lg:hidden"
+          />
         ) : error && contacts.length === 0 ? (
           <ErrorState message={error} onRetry={loadContacts} backTo="/home" backLabel="Go to Home" />
         ) : contacts.length === 0 && !hasFilters ? (

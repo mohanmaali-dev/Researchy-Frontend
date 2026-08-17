@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { FiArrowRight, FiBriefcase, FiChevronDown, FiChevronLeft, FiChevronRight, FiMapPin, FiPlus, FiSearch } from 'react-icons/fi'
 import { Link, useSearchParams } from 'react-router-dom'
 
-import { ErrorState, LoadingState } from '../../components/businesses/PageState.jsx'
+import { ErrorState, TableLoadingState } from '../../components/businesses/PageState.jsx'
 import StatusBadge from '../../components/businesses/StatusBadge.jsx'
 import * as businessService from '../../services/business.service.js'
 
@@ -186,7 +186,13 @@ function BusinessListPage() {
         )}
 
         {loading ? (
-          <LoadingState label="Loading businesses..." />
+          <TableLoadingState
+            label="Loading businesses..."
+            headers={['Business', 'Type', 'Industry', 'Location', 'Status', '']}
+            template="minmax(12rem, 1.5fr) 1fr 1fr 1.2fr auto 2rem"
+            minWidth="820px"
+            cellVariants={['line', 'line', 'line', 'line', 'pill', 'icon']}
+          />
         ) : error && businesses.length === 0 ? (
           <ErrorState message={error} onRetry={loadBusinesses} />
         ) : businesses.length === 0 && !hasFilters ? (

@@ -9,7 +9,7 @@ import {
   FiShield,
   FiUsers,
 } from 'react-icons/fi'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext.jsx'
@@ -78,32 +78,12 @@ const workflowStages = [
   { latin: 'Vici', action: 'Act', color: 'text-[#2f684f]', dot: 'bg-[#5b8c73]' },
 ]
 
-const formatTime = (date) =>
-  date.toLocaleTimeString(undefined, {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-
-const formatFullDate = (date) =>
-  date.toLocaleDateString(undefined, {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-
 function HomePage() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
-  const [currentTime, setCurrentTime] = useState(() => new Date())
   const [focusQuote] = useState(
     () => focusQuotes[Math.floor(Math.random() * focusQuotes.length)],
   )
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setCurrentTime(new Date()), 30000)
-    return () => window.clearInterval(timer)
-  }, [])
 
   const handleLogout = async () => {
     await logout()
@@ -146,23 +126,7 @@ function HomePage() {
 
       <main className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl flex-col justify-center px-4 py-7 sm:min-h-[calc(100vh-4.25rem)] sm:px-8 sm:py-10">
         <section className="mx-auto w-full max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.18em] text-[#777] sm:text-xs">
-            <span className="relative flex size-2">
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-30" />
-              <span className="relative inline-flex size-2 rounded-full bg-primary" />
-            </span>
-            Local time
-          </div>
-          <time dateTime={currentTime.toISOString()}>
-            <span className="mt-2 block text-5xl font-semibold tabular-nums tracking-[-0.055em] text-[#202020] sm:text-7xl">
-              {formatTime(currentTime)}
-            </span>
-            <span className="mt-2 block text-base font-medium text-[#444] sm:text-lg">
-              {formatFullDate(currentTime)}
-            </span>
-          </time>
-
-          <div className="mx-auto mt-5 flex max-w-lg items-center justify-center px-2" aria-label="3V workflow">
+          <div className="mx-auto flex max-w-lg items-center justify-center px-2" aria-label="3V workflow">
             {workflowStages.map(({ latin, action, color, dot }, index) => (
               <div key={latin} className="contents">
                 <div className="min-w-0 shrink-0 text-center">

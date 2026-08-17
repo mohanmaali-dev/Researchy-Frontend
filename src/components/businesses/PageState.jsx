@@ -17,6 +17,72 @@ export function LoadingState({ label = 'Loading...' }) {
   )
 }
 
+export function TableLoadingState({
+  label = 'Loading...',
+  headers,
+  template,
+  rows = 6,
+  minWidth = '760px',
+  desktopClassName = 'hidden md:block',
+  mobileClassName = 'space-y-3 md:hidden',
+  cellVariants = [],
+}) {
+  return (
+    <div role="status" aria-live="polite">
+      <span className="sr-only">{label}</span>
+
+      <div className={`${desktopClassName} overflow-x-auto rounded-md bg-[#fafafa]`}>
+        <div style={{ minWidth }}>
+          <div
+            className="grid items-center gap-4 px-5 py-3 text-[11px] font-medium uppercase tracking-wider text-[#999]"
+            style={{ gridTemplateColumns: template }}
+          >
+            {headers.map((header, index) => <span key={`${header}-${index}`}>{header}</span>)}
+          </div>
+          <div className="divide-y divide-[#ededeb]">
+            {Array.from({ length: rows }, (_, rowIndex) => (
+              <div
+                key={rowIndex}
+                className="grid animate-pulse items-center gap-4 bg-white px-5 py-[1.125rem] motion-reduce:animate-none"
+                style={{ gridTemplateColumns: template }}
+              >
+                {headers.map((header, columnIndex) => {
+                  const variant = cellVariants[columnIndex] || 'line'
+                  return (
+                    <span
+                      key={`${header}-${columnIndex}`}
+                      className={`block bg-[#e9e8e6] ${variant === 'pill' ? 'h-6 w-16 rounded-full' : variant === 'icon' ? 'size-4 justify-self-end rounded' : 'h-3.5 rounded'}`}
+                      style={variant === 'line' ? { width: `${58 + ((rowIndex + columnIndex) % 4) * 9}%` } : undefined}
+                    />
+                  )
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className={mobileClassName}>
+        {Array.from({ length: Math.min(rows, 5) }, (_, rowIndex) => (
+          <div key={rowIndex} className="animate-pulse rounded-md bg-[#f7f7f7] p-4 motion-reduce:animate-none">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <div className="h-4 rounded bg-[#e3e2df]" style={{ width: `${58 + (rowIndex % 3) * 12}%` }} />
+                <div className="mt-2.5 h-3 w-2/5 rounded bg-[#e9e8e6]" />
+              </div>
+              <div className="h-6 w-16 rounded-full bg-[#e5e4e1]" />
+            </div>
+            <div className="mt-4 flex gap-3">
+              <div className="h-3 w-1/3 rounded bg-[#e9e8e6]" />
+              <div className="h-3 w-1/4 rounded bg-[#e9e8e6]" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function ErrorState({ message, onRetry, backTo = '/businesses', backLabel = 'Go to businesses' }) {
   return (
     <div className="rounded-2xl bg-red-50/70 p-8 text-center">
