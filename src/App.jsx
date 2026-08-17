@@ -17,6 +17,7 @@ import DemoDataPage from './pages/DemoDataPage.jsx'
 import HowItWorksPage from './pages/HowItWorksPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import NotesPage from './pages/NotesPage.jsx'
+import SessionsPage from './pages/SessionsPage.jsx'
 import AddBusinessPage from './pages/businesses/AddBusinessPage.jsx'
 import BusinessDetailsPage from './pages/businesses/BusinessDetailsPage.jsx'
 import BusinessListPage from './pages/businesses/BusinessListPage.jsx'
@@ -63,6 +64,7 @@ function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<HomePage />} />
+            <Route path="/sessions" element={<SessionsPage />} />
 
             <Route element={<BusinessLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />

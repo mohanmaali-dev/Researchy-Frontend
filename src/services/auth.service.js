@@ -31,3 +31,18 @@ export const resetPassword = (token, password) =>
 export const verifyEmail = (token) => request('post', '/auth/verify-email', { token })
 
 export const sendVerificationEmail = () => request('post', '/auth/send-verification')
+
+const sessionHeaders = () => ({ headers: { 'x-refresh-token': getRefreshToken() } })
+
+export const getActiveSessions = () => request('get', '/auth/sessions', undefined, sessionHeaders())
+
+export const revokeSession = async (id) => {
+  const result = await request('delete', `/auth/sessions/${id}`, { refreshToken: getRefreshToken() })
+  if (result.data.currentRevoked) {
+    clearAuthTokens()
+    window.dispatchEvent(new Event('auth:expired'))
+  }
+  return result
+}
+
+export const revokeOtherSessions = () => request('delete', '/auth/sessions/others', { refreshToken: getRefreshToken() })

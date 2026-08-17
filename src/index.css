@@ -20,6 +20,12 @@ body {
   background: #f2f2f1;
 }
 
+@media (max-width: 767px) {
+  body.has-mobile-navigation {
+    padding-bottom: 5rem;
+  }
+}
+
 .workspace-content > main {
   width: 100%;
   max-width: none;

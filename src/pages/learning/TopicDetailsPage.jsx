@@ -283,7 +283,7 @@ function TopicDetailsPage() {
         </nav>
       </section>
       <div className="mt-3">{activeTab === 'overview' ? <TopicOverview topic={topic} /> : <TopicRecords topicId={id} type={activeTab} />}</div>
-      <Link to={`${(activeTab === 'overview' ? tabConfig.entries : tabConfig[activeTab]).addPath}?topicId=${id}`} className="fixed bottom-4 right-4 z-20 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 sm:hidden"><FiPlus aria-hidden="true" /> {activeTab === 'overview' ? 'Add entry' : tabConfig[activeTab].addLabel}</Link>
+      <Link to={`${(activeTab === 'overview' ? tabConfig.entries : tabConfig[activeTab]).addPath}?topicId=${id}`} className="fixed bottom-20 right-4 z-20 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 sm:hidden"><FiPlus aria-hidden="true" /> {activeTab === 'overview' ? 'Add entry' : tabConfig[activeTab].addLabel}</Link>
       <ConfirmModal open={confirmDelete} tone="warning" title="Archive Learning Topic?" message={`“${topic.title}” will move to Archived Topics. You can restore it or permanently delete it later.`} confirmLabel="Archive topic" loading={deleting} onConfirm={archive} onCancel={() => setConfirmDelete(false)} />
     </main>
   )

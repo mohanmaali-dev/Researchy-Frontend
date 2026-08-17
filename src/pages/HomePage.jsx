@@ -6,6 +6,7 @@ import {
   FiCompass,
   FiFileText,
   FiLogOut,
+  FiShield,
   FiUsers,
 } from 'react-icons/fi'
 import { useEffect, useState } from 'react'
@@ -129,6 +130,7 @@ function HomePage() {
             <span className="grid size-9 place-items-center rounded-md bg-[#efefed] text-sm font-medium text-[#555]">
               {(user?.name || 'W').trim().charAt(0).toUpperCase()}
             </span>
+            <Link to="/sessions" className="grid size-9 place-items-center rounded-md text-[#777] transition hover:bg-[#edf3f9] hover:text-[#315f91]" aria-label="Active sessions" title="Active sessions"><FiShield aria-hidden="true" /></Link>
             <button
               type="button"
               onClick={handleLogout}
