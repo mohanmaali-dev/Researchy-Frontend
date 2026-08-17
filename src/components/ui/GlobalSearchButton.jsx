@@ -154,7 +154,7 @@ function GlobalSearchButton({ className = '' }) {
           aria-autocomplete="list"
           autoComplete="off"
           placeholder="Search workspace"
-          className="h-10 w-full rounded-md border border-[#e1dfdc] bg-[#f7f7f7] pl-10 pr-9 text-sm text-[#292929] outline-none transition placeholder:text-[#999] focus:border-[#b9b5b0] focus:bg-white focus:ring-2 focus:ring-[#628ab4]/10"
+          className="global-search-input h-10 w-full rounded-md border border-[#e1dfdc] bg-[#f7f7f7] pl-10 pr-9 text-sm text-[#292929] outline-none transition placeholder:text-[#999] focus:border-[#cbc7c2] focus:bg-white focus:shadow-[0_2px_8px_rgba(40,35,31,0.04)]"
         />
         {query && <button type="button" onClick={() => { setQuery(''); setGroups([]) }} className="absolute right-1.5 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded text-[#888] hover:bg-[#ecebea]" aria-label="Clear search"><FiX aria-hidden="true" /></button>}
         {desktopOpen && <div className="absolute right-0 top-[calc(100%+0.5rem)] z-[200] w-[34rem] max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg border border-[#e1dfdc] bg-white shadow-[0_22px_65px_rgba(40,35,31,0.2)]">{resultList('desktop-global-search-results')}</div>}
@@ -174,7 +174,7 @@ function GlobalSearchButton({ className = '' }) {
         <>
           <button type="button" onClick={() => setMobileOpen(false)} className="fixed inset-0 z-[220] bg-black/30 backdrop-blur-[2px] lg:hidden" aria-label="Close search" />
           <section className="fixed inset-x-2 top-2 z-[230] overflow-hidden rounded-lg bg-white shadow-[0_20px_70px_rgba(0,0,0,0.24)] lg:hidden">
-            <div className="flex items-center gap-2 border-b border-[#ece9e5] p-2.5">
+            <div className="flex items-center gap-2 border-b border-[#ece9e5] p-2.5 transition focus-within:bg-[#faf9f8]">
               <FiSearch className="ml-1 shrink-0 text-[#777]" aria-hidden="true" />
               <input
                 ref={mobileInputRef}
@@ -187,7 +187,7 @@ function GlobalSearchButton({ className = '' }) {
                 aria-autocomplete="list"
                 autoComplete="off"
                 placeholder="Search workspace"
-                className="h-11 min-w-0 flex-1 bg-transparent text-base text-[#292929] outline-none placeholder:text-[#999]"
+                className="global-search-input h-11 min-w-0 flex-1 bg-transparent text-base text-[#292929] outline-none placeholder:text-[#999]"
               />
               {query && <button type="button" onClick={() => { setQuery(''); setGroups([]); mobileInputRef.current?.focus() }} className="grid size-10 shrink-0 place-items-center rounded-md text-[#777] hover:bg-[#f2f2f1]" aria-label="Clear search"><FiX aria-hidden="true" /></button>}
               <button type="button" onClick={() => setMobileOpen(false)} className="shrink-0 rounded-md bg-[#f2f2f1] px-3 py-2.5 text-xs font-semibold text-[#555]">Cancel</button>

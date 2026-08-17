@@ -44,6 +44,11 @@ body {
   outline-offset: 3px;
 }
 
+.global-search-input:focus-visible {
+  outline: none;
+  outline-offset: 0;
+}
+
 [tabindex="-1"]:focus {
   outline: none;
 }
