@@ -18,7 +18,7 @@ function RegisterPage() {
 
     try {
       const result = await register(form)
-      navigate(result.meta?.requiresEmailVerification ? '/check-email' : '/dashboard')
+      navigate(result.meta?.requiresEmailVerification ? '/check-email' : '/home')
     } catch (requestError) {
       setError(requestError.message)
     } finally {

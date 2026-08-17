@@ -138,7 +138,7 @@ function HowItWorksPage() {
               <FiHelpCircle aria-hidden="true" /> Simple help guide
             </span>
             <h1 className="mt-4 text-3xl tracking-tight text-[#171717] sm:text-4xl">
-              How to use Researchy
+              How to use 3V Workspace
             </h1>
             <p className="mt-3 text-sm leading-7 text-[#666] sm:text-base">
               Suppose you visit <span className="font-medium text-[#222]">Sharma Hardware in Ahmedabad</span>.
@@ -236,7 +236,7 @@ function HowItWorksPage() {
             </span>
             <div>
               <h2 className="text-xl tracking-tight">What happens automatically?</h2>
-              <p className="mt-1 text-sm leading-6 text-[#777]">You enter the research. Researchy keeps the useful summary ready.</p>
+              <p className="mt-1 text-sm leading-6 text-[#777]">You enter the research. 3V Workspace keeps the useful summary ready.</p>
             </div>
           </div>
 

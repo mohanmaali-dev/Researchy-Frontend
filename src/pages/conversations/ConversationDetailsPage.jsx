@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
-import { FiArrowLeft, FiBriefcase, FiCalendar, FiEdit2, FiTrash2, FiUser } from 'react-icons/fi'
+import { FiBriefcase, FiCalendar, FiEdit2, FiTrash2, FiUser } from 'react-icons/fi'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { ErrorState, LoadingState } from '../../components/businesses/PageState.jsx'
 import AddFollowUpLink from '../../components/follow-ups/AddFollowUpLink.jsx'
 import ConfirmModal from '../../components/ui/ConfirmModal.jsx'
+import BackButton from '../../components/ui/BackButton.jsx'
 import ProblemList from '../../components/problems/ProblemList.jsx'
 import * as conversationService from '../../services/conversation.service.js'
 
@@ -75,9 +76,7 @@ function ConversationDetailsPage() {
         <ErrorState message={error} />
       ) : (
         <>
-          <Link to={`/businesses/${conversation.business._id}`} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-primary-dark">
-            <FiArrowLeft aria-hidden="true" /> Back to {conversation.business.companyName}
-          </Link>
+          <BackButton fallback={`/businesses/${conversation.business._id}`} />
 
           {location.state?.notice && (
             <p className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">

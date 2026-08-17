@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
-import { FiArrowLeft } from 'react-icons/fi'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { ErrorState, LoadingState } from '../../components/businesses/PageState.jsx'
 import ConversationForm from '../../components/conversations/ConversationForm.jsx'
+import BackButton from '../../components/ui/BackButton.jsx'
 import * as businessService from '../../services/business.service.js'
 import * as conversationService from '../../services/conversation.service.js'
 
@@ -60,9 +60,7 @@ function AddConversationPage() {
         <ErrorState message={error} onRetry={loadBusiness} />
       ) : (
         <>
-          <Link to={`/businesses/${businessId}`} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-primary-dark">
-            <FiArrowLeft aria-hidden="true" /> Back to business
-          </Link>
+          <BackButton fallback={`/businesses/${businessId}`} />
           <div className="mb-8 mt-5">
             <p className="text-sm font-semibold uppercase tracking-wider text-primary-dark">New record</p>
             <h1 className="mt-1 text-3xl font-bold tracking-tight">Add conversation</h1>

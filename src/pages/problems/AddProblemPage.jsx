@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
-import { FiArrowLeft } from 'react-icons/fi'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { ErrorState, LoadingState } from '../../components/businesses/PageState.jsx'
 import ProblemForm from '../../components/problems/ProblemForm.jsx'
+import BackButton from '../../components/ui/BackButton.jsx'
 import * as conversationService from '../../services/conversation.service.js'
 import * as problemService from '../../services/problem.service.js'
 
@@ -69,9 +69,7 @@ function AddProblemPage() {
         <ErrorState message={error} onRetry={loadConversation} />
       ) : (
         <>
-          <Link to={`/conversations/${conversationId}`} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-primary-dark">
-            <FiArrowLeft aria-hidden="true" /> Back to conversation
-          </Link>
+          <BackButton fallback={`/conversations/${conversationId}`} />
           <div className="mb-8 mt-5">
             <p className="text-sm font-semibold uppercase tracking-wider text-primary-dark">New record</p>
             <h1 className="mt-1 text-3xl font-bold tracking-tight">Add problem</h1>

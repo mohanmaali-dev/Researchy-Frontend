@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { FiArrowLeft, FiBriefcase, FiEdit2, FiMessageSquare, FiTrash2, FiUsers } from 'react-icons/fi'
+import { FiBriefcase, FiChevronRight, FiEdit2, FiMessageSquare, FiTrash2, FiUsers } from 'react-icons/fi'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { ErrorState, LoadingState } from '../../components/businesses/PageState.jsx'
@@ -8,6 +8,7 @@ import { ScoreBadge, ValidationBadge } from '../../components/opportunities/Oppo
 import ScoreBreakdown from '../../components/opportunities/ScoreBreakdown.jsx'
 import ProblemTags from '../../components/problems/ProblemTags.jsx'
 import ConfirmModal from '../../components/ui/ConfirmModal.jsx'
+import BackButton from '../../components/ui/BackButton.jsx'
 import * as opportunityService from '../../services/opportunity.service.js'
 
 const formatDate = (date) =>
@@ -19,10 +20,28 @@ const formatDate = (date) =>
 
 function TextSection({ title, content }) {
   return (
-    <section className="rounded-xl bg-slate-50 p-5">
-      <h2 className="font-bold text-slate-900">{title}</h2>
-      <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-700">{content || '—'}</p>
+    <section className="rounded-md bg-[#f7f6f4] p-3.5 sm:p-5">
+      <h2 className="text-sm font-semibold text-[#292929] sm:text-base">{title}</h2>
+      <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[#666] sm:mt-3 sm:leading-7">{content || '—'}</p>
     </section>
+  )
+}
+
+function ResearchLink({ to, icon, label, title, tone = 'neutral' }) {
+  return (
+    <Link
+      to={to}
+      className={`group flex min-w-0 items-center gap-3 rounded-md p-3 transition focus:outline-none focus:ring-2 focus:ring-primary/20 sm:p-4 ${
+        tone === 'primary' ? 'bg-primary-light hover:bg-[#ffebe5]' : 'bg-[#f3f2f0] hover:bg-[#ebe9e6]'
+      }`}
+    >
+      <span className="grid size-9 shrink-0 place-items-center rounded-md bg-white text-primary-dark">{icon}</span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[10px] font-semibold uppercase tracking-wide text-[#999] sm:text-xs">{label}</span>
+        <span className="mt-0.5 block truncate text-sm font-semibold text-[#333] group-hover:text-primary-dark sm:mt-1 sm:text-base">{title}</span>
+      </span>
+      <FiChevronRight className="shrink-0 text-[#999] transition group-hover:translate-x-0.5 group-hover:text-primary-dark" aria-hidden="true" />
+    </Link>
   )
 }
 
@@ -69,77 +88,99 @@ function OpportunityDetailsPage() {
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+    <main className="w-full px-1 pb-3 pt-1 sm:px-2">
       {loading ? (
         <LoadingState label="Loading opportunity..." />
       ) : error && !opportunity ? (
         <ErrorState message={error} onRetry={loadOpportunity} />
       ) : (
         <>
-          <Link to="/opportunities" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-primary-dark"><FiArrowLeft aria-hidden="true" /> Back to opportunities</Link>
+          <BackButton fallback="/opportunities" />
 
           {location.state?.notice && (
-            <p className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{location.state.notice}</p>
+            <p className="mt-3 rounded-md bg-emerald-50 px-3.5 py-3 text-sm text-emerald-700 sm:px-4">{location.state.notice}</p>
           )}
           {error && (
-            <p role="alert" className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+            <p role="alert" className="mt-3 rounded-md bg-red-50 px-3.5 py-3 text-sm text-red-600 sm:px-4">{error}</p>
           )}
 
-          <section className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-wider text-primary-dark">Opportunity</p>
-                <div className="mt-2 flex flex-wrap items-center gap-3">
-                  <h1 className="text-3xl font-bold tracking-tight">{opportunity.problem.title}</h1>
-                  <ValidationBadge status={opportunity.validationStatus} />
+          <section className="mt-3 overflow-hidden rounded-lg bg-white shadow-[0_2px_10px_rgba(44,38,34,0.05)]">
+            <div className="bg-[#faf9f8] p-4 sm:p-7">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-primary-dark">Opportunity</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2.5 sm:gap-3">
+                    <h1 className="break-words text-2xl font-semibold tracking-[-0.025em] text-[#222] sm:text-3xl">{opportunity.problem.title}</h1>
+                    <ValidationBadge status={opportunity.validationStatus} />
+                  </div>
+                  {opportunity.problem.tags?.length > 0 && (
+                    <div className="mt-3 overflow-x-auto pb-1 sm:mt-4"><ProblemTags tags={opportunity.problem.tags} /></div>
+                  )}
+                  <p className="mt-3 text-xs text-[#777] sm:mt-4 sm:text-sm">Created {formatDate(opportunity.createdAt)} · {opportunity.status}</p>
                 </div>
-                <div className="mt-4"><ProblemTags tags={opportunity.problem.tags || []} /></div>
-                <p className="mt-4 text-sm text-slate-500">Created {formatDate(opportunity.createdAt)} · {opportunity.status}</p>
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
                 <ScoreBadge score={opportunity.opportunityScore} large />
-                <AddFollowUpLink
-                  businessId={opportunity.business._id}
-                  opportunityId={opportunity._id}
-                />
-                <Link to={`/opportunities/${opportunity._id}/edit`} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"><FiEdit2 aria-hidden="true" /> Edit</Link>
-                <button type="button" onClick={() => setConfirmDelete(true)} disabled={deleting} className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"><FiTrash2 aria-hidden="true" /> {deleting ? 'Deleting...' : 'Delete'}</button>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
+                <div className="col-span-2 [&>a]:w-full sm:col-span-1 sm:[&>a]:w-auto">
+                  <AddFollowUpLink
+                    businessId={opportunity.business._id}
+                    opportunityId={opportunity._id}
+                  />
+                </div>
+                <Link to={`/opportunities/${opportunity._id}/edit`} className="inline-flex items-center justify-center gap-2 rounded-md bg-[#ebe9e6] px-4 py-2.5 text-sm font-semibold text-[#333] transition hover:bg-[#dfdcd8]"><FiEdit2 aria-hidden="true" /> Edit</Link>
+                <button type="button" onClick={() => setConfirmDelete(true)} disabled={deleting} className="inline-flex items-center justify-center gap-2 rounded-md bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-100 disabled:opacity-50"><FiTrash2 aria-hidden="true" /> {deleting ? 'Deleting...' : 'Delete'}</button>
               </div>
             </div>
           </section>
 
-          <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_23rem]">
-            <div className="space-y-8">
-              <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-                <h2 className="text-xl font-bold">Linked research</h2>
-                <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                  <Link to={`/businesses/${opportunity.business._id}`} className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 hover:bg-slate-50"><FiBriefcase className="text-primary-dark" aria-hidden="true" /><div><p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Business</p><p className="mt-1 font-bold">{opportunity.business.companyName}</p></div></Link>
-                  <Link to={`/conversations/${opportunity.conversation._id}`} className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 hover:bg-slate-50"><FiMessageSquare className="text-primary-dark" aria-hidden="true" /><div><p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Conversation</p><p className="mt-1 font-bold">{opportunity.conversation.personName} · {opportunity.conversation.personRole}</p></div></Link>
+          <div className="mt-3 grid gap-3 lg:grid-cols-[minmax(0,1fr)_22rem]">
+            <div className="space-y-3">
+              <section className="rounded-lg bg-white p-3.5 sm:p-6">
+                <h2 className="text-lg font-semibold text-[#292929]">Linked research</h2>
+                <p className="mt-1 text-xs text-[#808080] sm:text-sm">Open the records connected to this opportunity.</p>
+                <div className="mt-3 grid gap-2.5 sm:grid-cols-2 sm:gap-3">
+                  <ResearchLink
+                    to={`/businesses/${opportunity.business._id}`}
+                    icon={<FiBriefcase aria-hidden="true" />}
+                    label="Business"
+                    title={opportunity.business.companyName}
+                    tone="primary"
+                  />
+                  <ResearchLink
+                    to={`/conversations/${opportunity.conversation._id}`}
+                    icon={<FiMessageSquare aria-hidden="true" />}
+                    label="Conversation"
+                    title={`${opportunity.conversation.personName} · ${opportunity.conversation.personRole}`}
+                  />
                 </div>
-                <Link to={`/problems/${opportunity.problem._id}`} className="mt-4 block rounded-xl border border-slate-200 p-5 hover:bg-slate-50">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Original Problem</p>
-                  <p className="mt-1 font-bold text-primary-dark">{opportunity.problem.title}</p>
-                  <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-500">{opportunity.problem.description}</p>
+                <Link to={`/problems/${opportunity.problem._id}`} className="group mt-2.5 block rounded-md bg-[#f7f6f4] p-3.5 transition hover:bg-[#efedea] focus:outline-none focus:ring-2 focus:ring-primary/20 sm:mt-3 sm:p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-[#999] sm:text-xs">Original problem</p>
+                    <FiChevronRight className="shrink-0 text-[#999] transition group-hover:translate-x-0.5 group-hover:text-primary-dark" aria-hidden="true" />
+                  </div>
+                  <p className="mt-1 text-sm font-semibold text-primary-dark sm:text-base">{opportunity.problem.title}</p>
+                  <p className="mt-1.5 line-clamp-2 text-sm leading-6 text-[#666]">{opportunity.problem.description}</p>
                 </Link>
-                <div className="mt-4 flex items-start gap-3 rounded-xl bg-primary-light p-4 text-primary-dark">
+                <div className="mt-2.5 flex items-start gap-2.5 rounded-md bg-primary-light p-3 text-primary-dark sm:mt-3 sm:p-4">
                   <FiUsers className="mt-0.5 shrink-0" aria-hidden="true" />
-                  <p className="text-sm"><span className="font-bold">{opportunity.scoreBreakdown.uniqueBusinessCount} unique businesses</span> currently report a Problem with a matching tag or normalized title.</p>
+                  <p className="text-xs leading-5 sm:text-sm"><span className="font-semibold">{opportunity.scoreBreakdown.uniqueBusinessCount} unique businesses</span> report a problem with a matching tag or title.</p>
                 </div>
               </section>
 
-              <section className="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-                <TextSection title="Why this opportunity looks valuable" content={opportunity.whyValuable} />
+              <section className="space-y-3 rounded-lg bg-white p-3.5 sm:space-y-4 sm:p-6">
+                <TextSection title="Why it looks valuable" content={opportunity.whyValuable} />
                 <TextSection title="Market potential" content={opportunity.marketPotential} />
                 <TextSection title="Notes" content={opportunity.notes} />
-                <dl className="grid gap-5 rounded-xl border border-slate-200 p-5 sm:grid-cols-3">
-                  <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">Difficulty</dt><dd className="mt-1 font-semibold">{opportunity.difficulty}</dd></div>
-                  <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">Validation</dt><dd className="mt-1 font-semibold">{opportunity.validationStatus}</dd></div>
-                  <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">Status</dt><dd className="mt-1 font-semibold">{opportunity.status}</dd></div>
+                <dl className="grid grid-cols-2 gap-x-4 gap-y-4 rounded-md bg-[#faf9f8] p-3.5 sm:grid-cols-3 sm:gap-5 sm:p-5">
+                  <div><dt className="text-[10px] font-semibold uppercase tracking-wide text-[#999] sm:text-xs">Difficulty</dt><dd className="mt-1 text-sm font-semibold text-[#444]">{opportunity.difficulty}</dd></div>
+                  <div><dt className="text-[10px] font-semibold uppercase tracking-wide text-[#999] sm:text-xs">Validation</dt><dd className="mt-1 text-sm font-semibold text-[#444]">{opportunity.validationStatus}</dd></div>
+                  <div><dt className="text-[10px] font-semibold uppercase tracking-wide text-[#999] sm:text-xs">Status</dt><dd className="mt-1 text-sm font-semibold text-[#444]">{opportunity.status}</dd></div>
                 </dl>
               </section>
             </div>
 
-            <div className="h-fit"><ScoreBreakdown breakdown={opportunity.scoreBreakdown} total={opportunity.opportunityScore} /></div>
+            <div className="order-first h-fit lg:order-last"><ScoreBreakdown breakdown={opportunity.scoreBreakdown} total={opportunity.opportunityScore} /></div>
           </div>
           <ConfirmModal
             open={confirmDelete}

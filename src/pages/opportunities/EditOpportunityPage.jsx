@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { FiArrowLeft } from 'react-icons/fi'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { ErrorState, LoadingState } from '../../components/businesses/PageState.jsx'
 import OpportunityForm from '../../components/opportunities/OpportunityForm.jsx'
+import BackButton from '../../components/ui/BackButton.jsx'
 import * as opportunityService from '../../services/opportunity.service.js'
 
 function EditOpportunityPage() {
@@ -69,7 +69,7 @@ function EditOpportunityPage() {
         <ErrorState message={error} onRetry={loadOpportunity} />
       ) : (
         <>
-          <Link to={`/opportunities/${id}`} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-primary-dark"><FiArrowLeft aria-hidden="true" /> Back to opportunity</Link>
+          <BackButton fallback={`/opportunities/${id}`} />
           <div className="mb-8 mt-5">
             <p className="text-sm font-semibold uppercase tracking-wider text-primary-dark">Update research</p>
             <h1 className="mt-1 text-3xl font-bold tracking-tight">Edit opportunity</h1>

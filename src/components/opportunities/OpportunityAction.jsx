@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 import * as opportunityService from '../../services/opportunity.service.js'
 
-function OpportunityAction({ problemId }) {
+function OpportunityAction({ problemId, className = '' }) {
   const [opportunity, setOpportunity] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -28,7 +28,7 @@ function OpportunityAction({ problemId }) {
   }, [loadOpportunity])
 
   if (loading) {
-    return <span className="h-10 w-36 animate-pulse rounded-lg bg-slate-100" />
+    return <span className={`h-10 w-36 animate-pulse rounded-lg bg-slate-100 ${className}`} />
   }
 
   if (error) {
@@ -38,7 +38,7 @@ function OpportunityAction({ problemId }) {
   return (
     <Link
       to={opportunity ? `/opportunities/${opportunity._id}` : `/problems/${problemId}/opportunity/new`}
-      className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-dark"
+      className={`inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-[0_3px_10px_rgba(216,84,54,0.18)] transition hover:bg-primary-dark ${className}`}
     >
       <FiStar aria-hidden="true" /> {opportunity ? 'View opportunity' : 'Mark as Opportunity'}
     </Link>

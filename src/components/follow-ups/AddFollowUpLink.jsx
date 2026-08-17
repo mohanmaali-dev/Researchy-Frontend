@@ -9,7 +9,7 @@ function AddFollowUpLink({ businessId, conversationId, opportunityId }) {
   return (
     <Link
       to={`/follow-ups/new?${query}`}
-      className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-dark"
+      className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-dark"
     >
       <FiClock aria-hidden="true" /> Add follow-up
     </Link>

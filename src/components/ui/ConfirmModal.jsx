@@ -9,6 +9,8 @@ function ConfirmModal({
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
   loading = false,
+  tone = 'danger',
+  loadingLabel,
   onConfirm,
   onCancel,
 }) {
@@ -49,19 +51,23 @@ function ConfirmModal({
 
   if (!rendered) return null
 
+  const isWarning = tone === 'warning'
+  const iconClass = isWarning ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-600'
+  const confirmClass = isWarning ? 'bg-amber-600 shadow-amber-600/15 hover:bg-amber-700' : 'bg-red-600 shadow-red-600/15 hover:bg-red-700'
+
   return createPortal(
     <div className={`fixed inset-0 z-[100] grid place-items-center p-4 transition-opacity duration-200 ${visible ? 'opacity-100' : 'opacity-0'}`} role="presentation">
       <button type="button" className="absolute inset-0 bg-black/35 backdrop-blur-[2px]" onClick={loading ? undefined : onCancel} aria-label="Close confirmation" />
       <section role="alertdialog" aria-modal="true" aria-labelledby="confirm-modal-title" aria-describedby="confirm-modal-message" className={`relative w-full max-w-md rounded-[24px] bg-white p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] transition duration-200 ease-out ${visible ? 'translate-y-0 scale-100' : 'translate-y-3 scale-95'}`}>
         <div className="flex items-start justify-between gap-4">
-          <span className="grid size-11 shrink-0 place-items-center rounded-full bg-red-50 text-xl text-red-600"><FiAlertTriangle aria-hidden="true" /></span>
+          <span className={`grid size-11 shrink-0 place-items-center rounded-full text-xl ${iconClass}`}><FiAlertTriangle aria-hidden="true" /></span>
           <button type="button" onClick={onCancel} disabled={loading} className="grid size-9 place-items-center rounded-full bg-[#f5f5f5] text-slate-500 transition hover:bg-[#ededed] hover:text-slate-900 disabled:opacity-50" aria-label="Close"><FiX aria-hidden="true" /></button>
         </div>
         <h2 id="confirm-modal-title" className="mt-5 text-xl font-semibold tracking-tight text-[#242424]">{title}</h2>
         <p id="confirm-modal-message" className="mt-2 text-sm leading-6 text-[#666]">{message}</p>
         <div className="mt-7 flex justify-end gap-2.5">
           <button ref={cancelButtonRef} type="button" onClick={onCancel} disabled={loading} className="rounded-full border border-[#dedede] bg-white px-5 py-2.5 text-sm font-medium text-[#444] transition hover:bg-[#f6f6f6] disabled:opacity-50">{cancelLabel}</button>
-          <button type="button" onClick={onConfirm} disabled={loading} className="rounded-full bg-red-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm shadow-red-600/15 transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60">{loading ? 'Deleting...' : confirmLabel}</button>
+          <button type="button" onClick={onConfirm} disabled={loading} className={`rounded-full px-5 py-2.5 text-sm font-medium text-white shadow-sm transition disabled:cursor-not-allowed disabled:opacity-60 ${confirmClass}`}>{loading ? (loadingLabel || (isWarning ? 'Archiving...' : 'Deleting...')) : confirmLabel}</button>
         </div>
       </section>
     </div>,

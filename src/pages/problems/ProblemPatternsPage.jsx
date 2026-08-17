@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { FiChevronRight, FiRepeat, FiTag, FiUsers } from 'react-icons/fi'
+import { FiArrowRight, FiBriefcase, FiRepeat, FiTag } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 
 import { ErrorState, LoadingState } from '../../components/businesses/PageState.jsx'
@@ -30,61 +30,100 @@ function ProblemPatternsPage() {
   }, [loadPatterns])
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
-      <div>
-        <p className="text-sm font-semibold uppercase tracking-wider text-primary-dark">Cross-business insights</p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight sm:text-4xl">Problem patterns</h1>
-        <p className="mt-2 max-w-2xl text-slate-500">
-          Tags and matching normalized titles reported by at least two different businesses.
-        </p>
-      </div>
+    <main className="w-full px-1 pb-3 pt-1 sm:px-2">
+      <section className="rounded-lg bg-white p-5 sm:p-7">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm text-[#888]">Business workspace</p>
+            <h1 className="mt-1 text-3xl tracking-[-0.035em] text-[#171717] sm:text-4xl">
+              Problem patterns
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[#707070]">
+              See which problems are being reported by more than one business.
+            </p>
+          </div>
 
-      <section className="mt-8">
+          {!loading && !error && patterns.length > 0 && (
+            <div className="flex items-center gap-3 rounded-md bg-primary-light px-3.5 py-2.5 text-primary-dark">
+              <FiRepeat aria-hidden="true" />
+              <div>
+                <p className="text-lg font-semibold leading-none">{patterns.length}</p>
+                <p className="mt-1 text-[10px] font-medium uppercase tracking-wide">Repeated patterns</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="mt-3 rounded-lg bg-white p-4 sm:p-6">
         {loading ? (
           <LoadingState label="Finding repeated problem patterns..." />
         ) : error ? (
           <ErrorState message={error} onRetry={loadPatterns} />
         ) : patterns.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-            <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-primary-light text-2xl text-primary-dark">
+          <div className="px-5 py-14 text-center">
+            <span className="mx-auto grid size-11 place-items-center rounded-md bg-primary-light text-primary-dark">
               <FiRepeat aria-hidden="true" />
             </span>
-            <h2 className="mt-4 text-xl font-bold">No repeated patterns yet</h2>
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-              Patterns appear when the same tag or normalized problem title is reported by at least two businesses.
+            <h2 className="mt-4 text-lg font-semibold text-[#292929]">No repeated patterns yet</h2>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#777]">
+              A pattern will appear when at least two businesses report the same tag or a matching problem title.
             </p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <div className="divide-y divide-slate-100">
-              {patterns.map((pattern) => (
-                <Link
-                  key={`${pattern.type}:${pattern.key}`}
-                  to={`/problem-patterns/details/${pattern.type}?key=${encodeURIComponent(pattern.key)}`}
-                  className="flex flex-col gap-4 p-5 transition hover:bg-slate-50/70 sm:flex-row sm:items-center sm:p-6"
-                >
-                  <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-light text-primary-dark">
-                    {pattern.type === 'tag' ? <FiTag aria-hidden="true" /> : <FiRepeat aria-hidden="true" />}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="text-lg font-bold">{formatTag(pattern.name)}</h2>
-                      <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                        {pattern.type}
-                      </span>
-                    </div>
-                    <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-500">
-                      <span>{pattern.problemCount} {pattern.problemCount === 1 ? 'problem' : 'problems'}</span>
-                      <span className="flex items-center gap-1.5">
-                        <FiUsers aria-hidden="true" /> {pattern.uniqueBusinessCount} businesses
-                      </span>
-                    </div>
-                  </div>
-                  <FiChevronRight className="self-end text-slate-400 sm:self-auto" aria-hidden="true" />
-                </Link>
-              ))}
+          <>
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-base font-semibold text-[#2a2a2a]">Repeated signals</h2>
+                <p className="mt-1 text-xs text-[#808080]">Most reported patterns appear first.</p>
+              </div>
+              <span className="hidden text-xs text-[#777] sm:block">Select a pattern to view details</span>
             </div>
-          </div>
+
+            <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3 xl:grid-cols-3">
+              {patterns.map((pattern) => {
+                const isTag = pattern.type === 'tag'
+                const PatternIcon = isTag ? FiTag : FiRepeat
+
+                return (
+                  <Link
+                    key={`${pattern.type}:${pattern.key}`}
+                    to={`/problem-patterns/details/${pattern.type}?key=${encodeURIComponent(pattern.key)}`}
+                    className="group flex min-h-[128px] flex-col rounded-lg border border-[#d8d4d0] bg-white p-3.5 shadow-[0_3px_12px_rgba(44,38,34,0.055)] transition hover:-translate-y-0.5 hover:border-[#e0a08f] hover:shadow-[0_8px_20px_rgba(65,48,41,0.09)] focus:outline-none focus:ring-2 focus:ring-primary/25 focus:ring-offset-2 sm:min-h-[164px] sm:p-5"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <span className="grid size-8 place-items-center rounded-md bg-primary-light text-sm text-primary-dark sm:size-9 sm:text-base">
+                        <PatternIcon aria-hidden="true" />
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded bg-[#efeeec] px-1.5 py-1 text-[9px] font-medium uppercase tracking-wide text-[#666] sm:px-2 sm:text-[10px]">
+                          {isTag ? 'Tag' : 'Similar title'}
+                        </span>
+                        <FiArrowRight className="text-[#aaa] transition group-hover:translate-x-0.5 group-hover:text-primary-dark" aria-hidden="true" />
+                      </div>
+                    </div>
+
+                    <h2 className="mt-2.5 line-clamp-2 text-sm font-semibold leading-5 text-[#252525] group-hover:text-primary-dark sm:mt-4 sm:text-base sm:leading-6">
+                      {formatTag(pattern.name)}
+                    </h2>
+
+                    <div className="mt-auto flex items-end justify-between gap-3 pt-3 sm:gap-4 sm:pt-5">
+                      <div className="flex items-center gap-2 text-[#555]">
+                        <FiBriefcase className="text-primary-dark" aria-hidden="true" />
+                        <span className="text-xs sm:text-sm">
+                          <strong className="font-semibold text-[#252525]">{pattern.uniqueBusinessCount}</strong>{' '}
+                          {pattern.uniqueBusinessCount === 1 ? 'business' : 'businesses'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#777]">
+                        {pattern.problemCount} {pattern.problemCount === 1 ? 'problem' : 'problems'}
+                      </p>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </>
         )}
       </section>
     </main>

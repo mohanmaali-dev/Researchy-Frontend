@@ -6,19 +6,19 @@ import {
   FiBriefcase,
   FiCalendar,
   FiCheckCircle,
-  FiChevronDown,
   FiClock,
   FiMessageSquare,
   FiRepeat,
   FiStar,
   FiTag,
 } from 'react-icons/fi'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { ErrorState, LoadingState } from '../components/businesses/PageState.jsx'
 import FollowUpStatusBadge from '../components/follow-ups/FollowUpStatusBadge.jsx'
 import { ScoreBadge, ValidationBadge } from '../components/opportunities/OpportunityBadges.jsx'
 import { formatTag } from '../components/problems/tag.utils.js'
+import DateInput from '../components/ui/DateInput.jsx'
 import * as dashboardService from '../services/dashboard.service.js'
 
 const formatDate = (date, options = {}) =>
@@ -29,6 +29,11 @@ const formatDate = (date, options = {}) =>
     timeZone: 'UTC',
     ...options,
   })
+
+const getTodayInputValue = () => {
+  const today = new Date()
+  return new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().slice(0, 10)
+}
 
 const activityIcons = {
   business: FiBriefcase,
@@ -101,6 +106,8 @@ function FollowUpCard({ title, description, items, overdue = false }) {
 }
 
 function DashboardPage() {
+  const navigate = useNavigate()
+  const [selectedDate, setSelectedDate] = useState(getTodayInputValue)
   const [dashboard, setDashboard] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -110,14 +117,14 @@ function DashboardPage() {
     setError('')
 
     try {
-      const result = await dashboardService.getDashboard()
+      const result = await dashboardService.getDashboard(selectedDate)
       setDashboard(result.data)
     } catch (requestError) {
       setError(requestError.message)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [selectedDate])
 
   useEffect(() => {
     loadDashboard()
@@ -132,10 +139,10 @@ function DashboardPage() {
   }
 
   const summaryCards = [
-    { label: 'Total Businesses', value: dashboard.summary.totalBusinesses, week: `${dashboard.researchProgress.businessesThisWeek} researched this week`, icon: FiBriefcase, to: '/businesses' },
-    { label: 'Conversations', value: dashboard.summary.totalConversations, week: `${dashboard.researchProgress.conversationsThisWeek} recorded this week`, icon: FiMessageSquare, to: '/businesses' },
-    { label: 'Problems', value: dashboard.summary.totalProblems, week: `${dashboard.researchProgress.problemsThisWeek} discovered this week`, icon: FiAlertCircle, to: '/problem-patterns' },
-    { label: 'Opportunities', value: dashboard.summary.totalOpportunities, week: `${dashboard.researchProgress.opportunitiesThisWeek} created this week`, icon: FiStar, to: '/opportunities' },
+    { label: 'Total Businesses', value: dashboard.summary.totalBusinesses, week: `${dashboard.researchProgress.businessesThisWeek} researched ${selectedDate === getTodayInputValue() ? 'this week' : 'that week'}`, icon: FiBriefcase, to: '/businesses' },
+    { label: 'Conversations', value: dashboard.summary.totalConversations, week: `${dashboard.researchProgress.conversationsThisWeek} recorded ${selectedDate === getTodayInputValue() ? 'this week' : 'that week'}`, icon: FiMessageSquare, to: '/businesses' },
+    { label: 'Problems', value: dashboard.summary.totalProblems, week: `${dashboard.researchProgress.problemsThisWeek} discovered ${selectedDate === getTodayInputValue() ? 'this week' : 'that week'}`, icon: FiAlertCircle, to: '/problem-patterns' },
+    { label: 'Opportunities', value: dashboard.summary.totalOpportunities, week: `${dashboard.researchProgress.opportunitiesThisWeek} created ${selectedDate === getTodayInputValue() ? 'this week' : 'that week'}`, icon: FiStar, to: '/opportunities' },
     { label: 'Pending Follow-ups', value: dashboard.summary.pendingFollowUps, week: 'Open reminders', icon: FiClock, to: '/follow-ups' },
     { label: 'Overdue Follow-ups', value: dashboard.summary.overdueFollowUps, week: 'Needs your attention', icon: FiAlertTriangle, to: '/follow-ups', danger: true },
   ]
@@ -147,22 +154,32 @@ function DashboardPage() {
           <h1 className="text-3xl font-extrabold tracking-[-0.035em] text-[#0a0a0a]">Research Overview</h1>
           <p className="mt-1 text-sm text-[#737373]">Your business research performance and priorities.</p>
         </div>
-        <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[#dedede] bg-white px-4 py-2.5 text-xs font-semibold text-[#292929]">
-          <FiCalendar className="text-base" aria-hidden="true" /> {formatDate(new Date(), { timeZone: undefined })} <FiChevronDown className="text-[#777]" aria-hidden="true" />
-        </span>
+        <label className="relative inline-flex w-fit items-center rounded-md border border-[#dedede] bg-white transition hover:border-[#cfcac5] focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 sm:mr-4 lg:mr-6">
+          <span className="sr-only">Dashboard reference date</span>
+          <FiCalendar className="pointer-events-none absolute left-3 text-base text-[#666]" aria-hidden="true" />
+          <DateInput
+            value={selectedDate}
+            onChange={(event) => setSelectedDate(event.target.value || getTodayInputValue())}
+            aria-label="Dashboard reference date"
+            className="h-10 w-[10.5rem] border-0 bg-transparent py-2 pl-9 pr-2 text-xs font-semibold text-[#292929] outline-none"
+          />
+        </label>
       </div>
 
       {error && <p role="alert" className="mx-2 mt-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
 
-      <section className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 min-[1750px]:grid-cols-6" aria-label="Research totals">
+      <section className="mt-4 grid grid-cols-2 gap-3 xl:grid-cols-3 min-[1750px]:grid-cols-6" aria-label="Research totals">
         {summaryCards.map(({ label, value, week, icon: Icon, to, danger }) => (
-          <Link key={label} to={to} className="dashboard-stat group rounded-2xl bg-white p-5">
-            <div className="flex items-start justify-between gap-3">
-              <p className="text-sm font-medium text-[#666]">{label}</p>
-              <span className={`grid size-10 place-items-center rounded-full ${danger ? 'bg-red-50 text-red-600' : 'bg-[#f6f6f6] text-[#222]'}`}><Icon aria-hidden="true" /></span>
+          <Link key={label} to={to} className="dashboard-stat group flex min-h-[148px] flex-col rounded-2xl bg-white p-4 sm:min-h-[162px] sm:p-5">
+            <div className="flex items-start justify-between gap-2">
+              <span className={`grid size-9 shrink-0 place-items-center rounded-md sm:size-10 ${danger ? 'bg-red-50 text-red-600' : 'bg-primary-light text-primary-dark'}`}><Icon aria-hidden="true" /></span>
+              <FiArrowRight className="mt-1 text-[#aaa] transition group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true" />
             </div>
-            <p className="mt-4 text-4xl font-medium tracking-[-0.04em] text-[#0b0b0b]">{value}</p>
-            <p className={`mt-5 text-xs ${danger && value > 0 ? 'font-semibold text-red-600' : 'text-[#686868]'}`}>{week}</p>
+            <p className="mt-3 text-3xl font-medium tracking-[-0.04em] text-[#171717] sm:text-4xl">{value}</p>
+            <div className="mt-auto pt-3">
+              <p className="text-xs font-medium leading-4 text-[#3f3f3f] sm:text-sm">{label}</p>
+              <p className={`mt-1 truncate text-[10px] sm:text-xs ${danger && value > 0 ? 'font-medium text-red-600' : 'text-[#777]'}`}>{week}</p>
+            </div>
           </Link>
         ))}
       </section>
@@ -227,16 +244,29 @@ function DashboardPage() {
                 <thead>
                   <tr className="bg-[#f7f7f7] text-xs font-medium text-[#777]"><th className="rounded-l-xl px-4 py-3">Activity</th><th className="px-4 py-3">Type</th><th className="px-4 py-3">Context</th><th className="px-4 py-3">Date</th><th className="rounded-r-xl px-4 py-3 text-right">Open</th></tr>
                 </thead>
-                <tbody className="divide-y divide-[#eeeeee]">
+                <tbody>
                   {dashboard.recentActivity.map((activity) => {
                     const Icon = activityIcons[activity.type] || FiClock
                     return (
-                      <tr key={`${activity.type}:${activity.id}`} className="text-sm text-[#262626]">
-                        <td className="border-b border-[#eeeeee] px-4 py-3.5"><div className="flex items-center gap-3"><span className="grid size-8 shrink-0 place-items-center rounded-full bg-[#f5f5f5]"><Icon aria-hidden="true" /></span><span className="max-w-xs truncate font-semibold">{activity.title}</span></div></td>
-                        <td className="border-b border-[#eeeeee] px-4 py-3.5 capitalize text-[#666]">{activity.type}</td>
-                        <td className="border-b border-[#eeeeee] px-4 py-3.5 text-[#666]">{activity.subtitle}</td>
-                        <td className="border-b border-[#eeeeee] px-4 py-3.5 text-[#666]">{formatDate(activity.createdAt)}</td>
-                        <td className="border-b border-[#eeeeee] px-4 py-3.5 text-right"><Link to={activity.path} className="inline-flex size-8 items-center justify-center rounded-full border border-[#ddd] hover:bg-[#f5f5f5]" aria-label={`Open ${activity.title}`}><FiArrowRight aria-hidden="true" /></Link></td>
+                      <tr
+                        key={`${activity.type}:${activity.id}`}
+                        role="link"
+                        tabIndex={0}
+                        onClick={() => navigate(activity.path)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault()
+                            navigate(activity.path)
+                          }
+                        }}
+                        className="cursor-pointer text-sm text-[#262626] transition hover:bg-[#faf9f8] focus:bg-[#faf9f8] focus:outline-none"
+                        aria-label={`Open ${activity.title}`}
+                      >
+                        <td className="px-4 py-3.5"><div className="flex items-center gap-3"><span className="grid size-8 shrink-0 place-items-center rounded-full bg-[#f5f5f5]"><Icon aria-hidden="true" /></span><span className="max-w-xs truncate font-semibold">{activity.title}</span></div></td>
+                        <td className="px-4 py-3.5 capitalize text-[#666]">{activity.type}</td>
+                        <td className="px-4 py-3.5 text-[#666]">{activity.subtitle}</td>
+                        <td className="px-4 py-3.5 text-[#666]">{formatDate(activity.createdAt)}</td>
+                        <td className="px-4 py-3.5 text-right"><span className="inline-flex size-8 items-center justify-center rounded-full border border-[#ddd]" aria-hidden="true"><FiArrowRight /></span></td>
                       </tr>
                     )
                   })}

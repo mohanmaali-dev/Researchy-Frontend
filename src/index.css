@@ -27,15 +27,23 @@ body {
 }
 
 .workspace-content main .rounded-2xl {
-  border-radius: 1.25rem;
+  border-radius: 0.625rem;
+}
+
+.workspace-content main .rounded-3xl,
+.workspace-content main .rounded-\[18px\],
+.workspace-content main .rounded-\[20px\],
+.workspace-content main .rounded-\[22px\],
+.workspace-content main .rounded-\[24px\] {
+  border-radius: 0.625rem;
 }
 
 .workspace-content main .border-slate-200 {
-  border-color: transparent;
+  border-color: #ddd9d4;
 }
 
 .workspace-content main .shadow-sm {
-  box-shadow: none;
+  box-shadow: 0 2px 8px rgb(44 38 34 / 6%);
 }
 
 .workspace-content form input:not([type="checkbox"]):not([type="radio"]),
@@ -90,8 +98,8 @@ body {
 
 .dashboard-panel,
 .dashboard-stat {
-  border: 1px solid rgb(0 0 0 / 4%);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 2%);
+  border: 1px solid #ddd9d4;
+  box-shadow: 0 2px 8px rgb(44 38 34 / 6%);
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease;
 }
@@ -134,6 +142,18 @@ body {
 
 .animate-overlay-in {
   animation: overlay-in 200ms ease-out;
+}
+
+.pattern-details-columns {
+  display: grid;
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .pattern-details-columns {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 1fr);
+    align-items: start;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -28,7 +28,7 @@ function VerifyEmailPage() {
           await refreshSession()
           const userResult = await getCurrentUser()
           updateUser(userResult.data)
-          navigate('/dashboard', { replace: true })
+          navigate('/home', { replace: true })
         } catch {
           navigate('/login', { replace: true })
         }
