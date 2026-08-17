@@ -1,11 +1,18 @@
-import { Navigate, Outlet } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext.jsx'
+import { rememberWorkspacePage } from '../utils/recentWorkspace.js'
 import MobileNavigation from './mobile/MobileNavigation.jsx'
 
 function ProtectedRoute() {
   const { user, loading } = useAuth()
+  const location = useLocation()
   const verificationRequired = import.meta.env.VITE_REQUIRE_EMAIL_VERIFICATION === 'true'
+
+  useEffect(() => {
+    if (user) rememberWorkspacePage(location.pathname, user._id || user.id)
+  }, [location.pathname, user])
 
   if (loading) {
     return (

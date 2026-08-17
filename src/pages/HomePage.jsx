@@ -13,47 +13,54 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext.jsx'
+import { getRecentWorkspace } from '../utils/recentWorkspace.js'
 
-const workAreas = [
+const activeWorkAreas = [
   {
     name: 'Business',
-    description: 'Businesses, conversations, problems, opportunities, and follow-ups.',
+    description: 'Research businesses and promising opportunities.',
     icon: FiBriefcase,
     to: '/businesses',
     color: 'bg-[#f8ded7] text-[#b9472e]',
-    available: true,
+    accent: 'bg-[#d96a50]',
+    action: 'bg-[#fff0ec] text-[#b9472e] group-hover:bg-[#f8ded7]',
+    hover: 'hover:border-[#e5a494]',
   },
   {
     name: 'Learning',
-    description: 'Learning notes, resources, progress, and useful takeaways.',
+    description: 'Save knowledge, resources, and learning progress.',
     icon: FiBookOpen,
     to: '/learning',
     color: 'bg-[#e2ecf9] text-[#315f91]',
-    available: true,
+    accent: 'bg-[#628ab4]',
+    action: 'bg-[#edf3f9] text-[#315f91] group-hover:bg-[#e2ecf9]',
+    hover: 'hover:border-[#9eb9d5]',
   },
   {
     name: 'Contacts',
-    description: 'People, companies, roles, notes, and relationship details.',
+    description: 'Remember people and important relationship details.',
     icon: FiUsers,
     to: '/contacts',
     color: 'bg-[#e0eee6] text-[#2f684f]',
-    available: true,
+    accent: 'bg-[#5b8c73]',
+    action: 'bg-[#edf5f0] text-[#2f684f] group-hover:bg-[#e0eee6]',
+    hover: 'hover:border-[#9ab9a8]',
   },
+]
+
+const plannedWorkAreas = [
   {
     name: 'Tasks',
-    description: 'Personal tasks and the next actions that need your attention.',
     icon: FiCheckSquare,
     color: 'bg-[#f7ead0] text-[#855816]',
   },
   {
     name: 'Research',
-    description: 'Research topics, useful sources, findings, and open questions.',
     icon: FiCompass,
     color: 'bg-[#e9e2f5] text-[#5c478c]',
   },
   {
     name: 'Notes',
-    description: 'Quick notes, ideas, decisions, and things worth remembering.',
     icon: FiFileText,
     color: 'bg-[#e4e7e9] text-[#4c5761]',
   },
@@ -84,6 +91,14 @@ function HomePage() {
   const [focusQuote] = useState(
     () => focusQuotes[Math.floor(Math.random() * focusQuotes.length)],
   )
+  const recentWorkspace = getRecentWorkspace(user?._id || user?.id)
+  const continuePage = recentWorkspace || {
+    section: 'Business',
+    page: 'Business workspace',
+    path: '/businesses',
+  }
+  const continueArea = activeWorkAreas.find((area) => area.name === continuePage.section) || activeWorkAreas[0]
+  const ContinueIcon = continueArea.icon
 
   const handleLogout = async () => {
     await logout()
@@ -124,73 +139,100 @@ function HomePage() {
         </div>
       </header>
 
-      <main className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl flex-col justify-center px-4 py-7 sm:min-h-[calc(100vh-4.25rem)] sm:px-8 sm:py-10">
+      <main className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl flex-col justify-start px-4 py-6 sm:min-h-[calc(100vh-4.25rem)] sm:px-8 sm:py-9 lg:justify-center">
         <section className="mx-auto w-full max-w-3xl text-center">
-          <div className="mx-auto flex max-w-lg items-center justify-center px-2" aria-label="3V workflow">
+          <div className="mx-auto flex max-w-md items-center justify-center px-2" aria-label="3V workflow">
             {workflowStages.map(({ latin, action, color, dot }, index) => (
               <div key={latin} className="contents">
                 <div className="min-w-0 shrink-0 text-center">
-                  <p className={`flex items-center justify-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] ${color}`}>
+                  <p className={`flex items-center justify-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] ${color}`}>
                     <span className={`size-1.5 rounded-full ${dot}`} aria-hidden="true" /> {latin}
                   </p>
-                  <p className="mt-0.5 text-[10px] font-medium text-[#777] sm:text-xs">{action}</p>
+                  <p className="mt-0.5 text-[10px] font-medium text-[#777]">{action}</p>
                 </div>
                 {index < workflowStages.length - 1 && (
-                  <span className="mx-3 h-px min-w-6 flex-1 bg-[#d8d4d0] sm:mx-6" aria-hidden="true" />
+                  <span className="mx-3 h-px min-w-5 flex-1 bg-[#d8d4d0] sm:mx-5" aria-hidden="true" />
                 )}
               </div>
             ))}
           </div>
         </section>
 
-        <section className="mt-7 border-t border-[#dfdcd8] pt-7 sm:mt-9 sm:pt-9" aria-label="Workspaces">
+        <Link
+          to={continuePage.path}
+          className={`group mt-6 flex items-center gap-3 rounded-[10px] border border-[#d8d5d1] bg-white p-3.5 shadow-[0_3px_14px_rgba(46,39,35,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_22px_rgba(46,39,35,0.10)] focus:outline-none focus:ring-2 focus:ring-primary/25 sm:mt-7 sm:gap-4 sm:p-4 ${continueArea.hover}`}
+        >
+          <span className={`grid size-10 shrink-0 place-items-center rounded-md ${continueArea.color}`}>
+            <ContinueIcon aria-hidden="true" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[10px] font-medium uppercase tracking-[0.12em] text-[#8a8a8a]">
+              {recentWorkspace ? 'Continue your work' : 'A useful place to begin'}
+            </span>
+            <span className="mt-0.5 block truncate text-sm font-semibold text-[#292929] sm:text-base">
+              {continuePage.page}
+            </span>
+            <span className="mt-0.5 block text-xs text-[#777]">{continuePage.section}</span>
+          </span>
+          <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-2 text-xs font-semibold transition ${continueArea.action}`}>
+            Continue <FiArrowRight aria-hidden="true" />
+          </span>
+        </Link>
+
+        <section className="mt-6 border-t border-[#dfdcd8] pt-5 sm:mt-7 sm:pt-6" aria-labelledby="active-workspaces-title">
+          <div className="mb-3 flex items-center justify-between gap-3 px-0.5">
+            <h2 id="active-workspaces-title" className="text-xs font-semibold uppercase tracking-[0.12em] text-[#777]">
+              Active workspaces
+            </h2>
+            <span className="text-[10px] text-[#999]">Select an area</span>
+          </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {workAreas.map(({ name, description, icon: Icon, to, color, available }) => {
-            const content = (
-              <div className="flex min-w-0 items-start gap-4 sm:block">
-                <span className={`grid size-10 shrink-0 place-items-center rounded-md ${color}`}>
-                    <Icon aria-hidden="true" />
-                </span>
-
-                <div className="min-w-0 flex-1 sm:mt-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <h3 className="text-base font-semibold text-[#2b2b2b]">{name}</h3>
-                    {available ? (
-                      <span className="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition group-hover:bg-primary-dark">
-                        Open <FiArrowRight aria-hidden="true" />
-                      </span>
-                    ) : (
-                      <span className="rounded bg-[#e9e8e5] px-2 py-1 text-[10px] font-medium text-[#6f6f6f]">
-                        Soon
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-1.5 text-sm leading-5 text-[#555]">{description}</p>
-                </div>
-              </div>
-            )
-
-            return available ? (
+            {activeWorkAreas.map(({ name, description, icon: Icon, to, color, accent, action, hover }) => (
               <Link
                 key={name}
                 to={to}
-                className="group cursor-pointer rounded-[10px] border-2 border-[#dd765d] bg-[#fffaf8] p-4 shadow-[0_7px_20px_rgba(77,54,46,0.13)] transition duration-200 hover:-translate-y-1 hover:border-[#cb5d43] hover:shadow-[0_12px_28px_rgba(77,54,46,0.18)] focus:outline-none focus:ring-3 focus:ring-[#efad9c] focus:ring-offset-2 sm:min-h-[172px] sm:p-5"
+                className={`group relative overflow-hidden rounded-[10px] border border-[#d8d5d1] bg-white p-4 shadow-[0_4px_16px_rgba(46,39,35,0.08)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_9px_24px_rgba(46,39,35,0.12)] focus:outline-none focus:ring-2 focus:ring-primary/25 sm:min-h-[158px] sm:p-5 ${hover}`}
               >
-                {content}
+                <span className={`absolute inset-y-4 left-0 w-1 rounded-r-full ${accent}`} aria-hidden="true" />
+                <div className="flex min-w-0 items-start gap-3.5 sm:block">
+                  <span className={`grid size-10 shrink-0 place-items-center rounded-md ${color}`}>
+                    <Icon aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0 flex-1 sm:mt-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <h3 className="text-base font-semibold text-[#2b2b2b]">{name}</h3>
+                      <span className={`grid size-8 shrink-0 place-items-center rounded-md transition ${action}`}>
+                        <FiArrowRight className="transition group-hover:translate-x-0.5" aria-hidden="true" />
+                      </span>
+                    </div>
+                    <p className="mt-1.5 text-sm leading-5 text-[#666]">{description}</p>
+                  </div>
+                </div>
               </Link>
-            ) : (
-              <article
-                key={name}
-                className="rounded-[10px] border border-[#bdb8b3] bg-white p-4 shadow-[0_5px_16px_rgba(46,39,35,0.10)] sm:min-h-[172px] sm:p-5"
-              >
-                {content}
-              </article>
-            )
-          })}
+            ))}
           </div>
         </section>
 
-        <footer className="mx-auto mt-6 flex w-full max-w-2xl items-center justify-center gap-3 rounded-md bg-white/75 px-4 py-3 text-center shadow-[0_2px_10px_rgba(46,39,35,0.06)] sm:mt-8 sm:px-5">
+        <section className="mt-5" aria-labelledby="planned-workspaces-title">
+          <h2 id="planned-workspaces-title" className="px-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-[#999]">
+            Coming later
+          </h2>
+          <div className="mt-2 grid grid-cols-3 gap-2">
+            {plannedWorkAreas.map(({ name, icon: Icon, color }) => (
+              <div key={name} className="flex min-w-0 flex-col items-start gap-2 rounded-md border border-[#dfdcd8] bg-[#f7f6f4] px-2.5 py-2.5 sm:flex-row sm:items-center sm:px-3">
+                <span className={`grid size-7 shrink-0 place-items-center rounded ${color}`}>
+                  <Icon className="text-xs" aria-hidden="true" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block truncate text-xs font-medium text-[#555]">{name}</span>
+                  <span className="hidden text-[9px] uppercase tracking-wide text-[#999] sm:block">Planned</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <footer className="mx-auto mt-6 flex w-full max-w-2xl items-center justify-center gap-3 rounded-md bg-white/70 px-4 py-3 text-center shadow-[0_2px_10px_rgba(46,39,35,0.05)] sm:mt-7 sm:px-5">
           <span className="h-7 w-0.5 shrink-0 rounded-full bg-primary/60" aria-hidden="true" />
           <p className="text-sm leading-6 text-[#626262] sm:text-base">“{focusQuote}”</p>
         </footer>
