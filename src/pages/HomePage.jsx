@@ -80,9 +80,9 @@ const focusQuotes = [
 ]
 
 const workflowStages = [
-  { latin: 'Veni', action: 'Capture', color: 'text-[#b9472e]', dot: 'bg-[#d96a50]' },
-  { latin: 'Vidi', action: 'Understand', color: 'text-[#315f91]', dot: 'bg-[#628ab4]' },
-  { latin: 'Vici', action: 'Act', color: 'text-[#2f684f]', dot: 'bg-[#5b8c73]' },
+  { latin: 'Veni', action: 'Capture', color: 'text-[#b9472e]', dot: 'bg-[#d96a50]', animation: 'home-workflow-veni' },
+  { latin: 'Vidi', action: 'Understand', color: 'text-[#315f91]', dot: 'bg-[#628ab4]', animation: 'home-workflow-vidi' },
+  { latin: 'Vici', action: 'Act', color: 'text-[#2f684f]', dot: 'bg-[#5b8c73]', animation: 'home-workflow-vici' },
 ]
 
 function HomePage() {
@@ -106,8 +106,34 @@ function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f1f0ee] text-[#252525]">
-      <header className="border-b border-[#e3e1de] bg-white">
+    <div className="relative isolate min-h-screen overflow-hidden bg-[#f1f0ee] text-[#252525]">
+      <div className="home-journey-bg" aria-hidden="true">
+        <span className="home-journey-sweep" />
+        <svg className="home-journey-mark" viewBox="0 0 1200 720" preserveAspectRatio="none">
+          <path className="home-v-base home-v-veni" d="M70 105 L220 600 L370 105" pathLength="1" />
+          <path className="home-v-base home-v-vidi" d="M410 105 L600 600 L790 105" pathLength="1" />
+          <path className="home-v-base home-v-vici" d="M830 105 L980 600 L1130 105" pathLength="1" />
+
+          <path className="home-v-draw home-v-veni" d="M70 105 L220 600 L370 105" pathLength="1" />
+          <path className="home-v-draw home-v-vidi" d="M410 105 L600 600 L790 105" pathLength="1" />
+          <path className="home-v-draw home-v-vici" d="M830 105 L980 600 L1130 105" pathLength="1" />
+
+          <circle className="home-v-particle home-v-particle-veni" r="4">
+            <animateMotion path="M70 105 L220 600 L370 105" dur="12s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0;0.7;0.7;0" keyTimes="0;0.08;0.42;1" dur="12s" repeatCount="indefinite" />
+          </circle>
+          <circle className="home-v-particle home-v-particle-vidi" r="4">
+            <animateMotion path="M410 105 L600 600 L790 105" begin="2s" dur="12s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0;0.7;0.7;0" keyTimes="0;0.08;0.42;1" begin="2s" dur="12s" repeatCount="indefinite" />
+          </circle>
+          <circle className="home-v-particle home-v-particle-vici" r="4">
+            <animateMotion path="M830 105 L980 600 L1130 105" begin="4s" dur="12s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0;0.7;0.7;0" keyTimes="0;0.08;0.42;1" begin="4s" dur="12s" repeatCount="indefinite" />
+          </circle>
+        </svg>
+      </div>
+
+      <header className="relative z-10 border-b border-[#e3e1de]/90 bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:h-[68px] sm:px-8">
           <Link to="/home" className="flex items-center gap-2.5" aria-label="3V home">
             <img src="/favicon.svg" alt="" className="size-9 shrink-0 rounded-md" aria-hidden="true" />
@@ -139,19 +165,19 @@ function HomePage() {
         </div>
       </header>
 
-      <main className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl flex-col justify-start px-4 py-6 sm:min-h-[calc(100vh-4.25rem)] sm:px-8 sm:py-9 lg:justify-center">
+      <main className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl flex-col justify-start px-4 py-6 sm:min-h-[calc(100vh-4.25rem)] sm:px-8 sm:py-9 lg:justify-center">
         <section className="mx-auto w-full max-w-3xl text-center">
           <div className="mx-auto flex max-w-md items-center justify-center px-2" aria-label="3V workflow">
-            {workflowStages.map(({ latin, action, color, dot }, index) => (
+            {workflowStages.map(({ latin, action, color, dot, animation }, index) => (
               <div key={latin} className="contents">
-                <div className="min-w-0 shrink-0 text-center">
+                <div className={`home-workflow-stage min-w-0 shrink-0 text-center ${animation}`}>
                   <p className={`flex items-center justify-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] ${color}`}>
-                    <span className={`size-1.5 rounded-full ${dot}`} aria-hidden="true" /> {latin}
+                    <span className={`home-workflow-dot size-1.5 rounded-full ${dot}`} aria-hidden="true" /> {latin}
                   </p>
                   <p className="mt-0.5 text-[10px] font-medium text-[#777]">{action}</p>
                 </div>
                 {index < workflowStages.length - 1 && (
-                  <span className="mx-3 h-px min-w-5 flex-1 bg-[#d8d4d0] sm:mx-5" aria-hidden="true" />
+                  <span className={`home-workflow-connector mx-3 h-px min-w-5 flex-1 sm:mx-5 ${index === 0 ? 'home-connector-veni-vidi' : 'home-connector-vidi-vici'}`} aria-hidden="true" />
                 )}
               </div>
             ))}
@@ -179,7 +205,7 @@ function HomePage() {
           </span>
         </Link>
 
-        <section className="mt-6 border-t border-[#dfdcd8] pt-5 sm:mt-7 sm:pt-6" aria-labelledby="active-workspaces-title">
+        <section className="mt-6 sm:mt-7" aria-labelledby="active-workspaces-title">
           <div className="mb-3 flex items-center justify-between gap-3 px-0.5">
             <h2 id="active-workspaces-title" className="text-xs font-semibold uppercase tracking-[0.12em] text-[#777]">
               Active workspaces

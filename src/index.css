@@ -20,6 +20,195 @@ body {
   background: #f2f2f1;
 }
 
+.home-journey-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% -10%, rgb(255 255 255 / 96%), transparent 47%),
+    linear-gradient(120deg, #f8f3f0 0%, #f3f4f6 50%, #f1f6f3 100%);
+}
+
+.home-journey-bg::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  opacity: 0.2;
+  background-image: linear-gradient(rgb(74 68 63 / 7%) 1px, transparent 1px), linear-gradient(90deg, rgb(74 68 63 / 7%) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, transparent, black 22%, black 76%, transparent);
+}
+
+.home-journey-sweep {
+  position: absolute;
+  inset-block: -18%;
+  left: -65%;
+  width: 62%;
+  transform: skewX(-12deg);
+  background: linear-gradient(90deg, transparent, rgb(217 106 80 / 12%) 18%, rgb(98 138 180 / 13%) 52%, rgb(91 140 115 / 12%) 82%, transparent);
+  filter: blur(16px);
+  will-change: transform;
+  animation: home-journey-sweep 14s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.home-journey-mark {
+  position: absolute;
+  inset: 2% 3%;
+  width: 94%;
+  height: 96%;
+  overflow: visible;
+}
+
+.home-v-base,
+.home-v-draw {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.home-v-base {
+  stroke-width: 1.1;
+  opacity: 0.09;
+}
+
+.home-v-draw {
+  stroke-width: 2;
+  opacity: 0;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: home-v-draw 12s ease-in-out infinite;
+}
+
+.home-v-veni { stroke: #d96a50; }
+.home-v-vidi { stroke: #628ab4; }
+.home-v-vici { stroke: #5b8c73; }
+
+.home-v-draw.home-v-vidi { animation-delay: 2s; }
+.home-v-draw.home-v-vici { animation-delay: 4s; }
+
+.home-v-particle {
+  opacity: 0;
+  vector-effect: non-scaling-stroke;
+}
+
+.home-v-particle-veni {
+  fill: #d96a50;
+  filter: drop-shadow(0 0 5px rgb(217 106 80 / 55%));
+}
+
+.home-v-particle-vidi {
+  fill: #628ab4;
+  filter: drop-shadow(0 0 5px rgb(98 138 180 / 55%));
+}
+
+.home-v-particle-vici {
+  fill: #5b8c73;
+  filter: drop-shadow(0 0 5px rgb(91 140 115 / 55%));
+}
+
+.home-workflow-stage {
+  --workflow-delay: 0s;
+  animation: home-workflow-focus 6s ease-in-out var(--workflow-delay) infinite;
+  animation-fill-mode: backwards;
+}
+
+.home-workflow-veni { --workflow-delay: 0s; --workflow-ring: rgb(217 106 80 / 15%); }
+.home-workflow-vidi { --workflow-delay: 2s; --workflow-ring: rgb(98 138 180 / 15%); }
+.home-workflow-vici { --workflow-delay: 4s; --workflow-ring: rgb(91 140 115 / 15%); }
+
+.home-workflow-dot {
+  animation: home-workflow-dot 6s ease-in-out var(--workflow-delay) infinite;
+  animation-fill-mode: backwards;
+}
+
+.home-workflow-connector {
+  position: relative;
+  overflow: hidden;
+  background: #d8d4d0;
+}
+
+.home-workflow-connector::after {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 42%;
+  content: '';
+  transform: translateX(-120%);
+  animation: home-connector-travel 6s ease-in-out infinite;
+}
+
+.home-connector-veni-vidi::after {
+  background: linear-gradient(90deg, transparent, #d96a50, #628ab4, transparent);
+  animation-delay: 0.7s;
+}
+
+.home-connector-vidi-vici::after {
+  background: linear-gradient(90deg, transparent, #628ab4, #5b8c73, transparent);
+  animation-delay: 2.7s;
+}
+
+@keyframes home-journey-sweep {
+  0% { transform: translate3d(0, 0, 0) skewX(-12deg); }
+  58%, 100% { transform: translate3d(270vw, 0, 0) skewX(-12deg); }
+}
+
+@keyframes home-v-draw {
+  0% { opacity: 0; stroke-dashoffset: 1; }
+  9% { opacity: 0.34; }
+  34% { opacity: 0.26; stroke-dashoffset: 0; }
+  62% { opacity: 0.08; stroke-dashoffset: 0; }
+  86%, 100% { opacity: 0; stroke-dashoffset: 0; }
+}
+
+@keyframes home-workflow-focus {
+  0%, 20%, 100% { opacity: 0.62; transform: translateY(0); }
+  8% { opacity: 1; transform: translateY(-2px); }
+}
+
+@keyframes home-workflow-dot {
+  0%, 20%, 100% { box-shadow: 0 0 0 0 currentColor; transform: scale(1); }
+  8% { box-shadow: 0 0 0 5px var(--workflow-ring); transform: scale(1.35); }
+}
+
+@keyframes home-connector-travel {
+  0%, 10% { transform: translateX(-120%); opacity: 0; }
+  28% { opacity: 1; }
+  42%, 100% { transform: translateX(260%); opacity: 0; }
+}
+
+@media (max-width: 767px) {
+  .home-journey-mark {
+    inset: 6% auto auto 0;
+    width: 340vw;
+    height: 88%;
+    opacity: 0;
+    will-change: transform, opacity;
+    animation: home-mobile-v-journey 18s ease-in-out infinite;
+  }
+
+  .home-v-base {
+    opacity: 0.055;
+  }
+
+  .home-v-draw {
+    opacity: 0.16;
+    stroke-width: 1.5;
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+}
+
+@keyframes home-mobile-v-journey {
+  0% { opacity: 0; transform: translate3d(-12vw, 0, 0); }
+  5%, 28% { opacity: 0.72; transform: translate3d(-12vw, 0, 0); }
+  36%, 60% { opacity: 0.72; transform: translate3d(-120vw, 0, 0); }
+  68%, 93% { opacity: 0.72; transform: translate3d(-228vw, 0, 0); }
+  100% { opacity: 0; transform: translate3d(-228vw, 0, 0); }
+}
+
 @media (max-width: 767px) {
   body.has-mobile-navigation {
     padding-bottom: 5rem;
@@ -163,6 +352,21 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .home-journey-sweep,
+  .home-journey-mark,
+  .home-v-draw,
+  .home-v-particle,
+  .home-workflow-connector::after {
+    display: none;
+  }
+
+  .home-workflow-stage,
+  .home-workflow-dot {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
   *,
   *::before,
   *::after {
