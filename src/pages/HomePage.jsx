@@ -46,6 +46,16 @@ const activeWorkAreas = [
     action: 'bg-[#edf5f0] text-[#2f684f] group-hover:bg-[#e0eee6]',
     hover: 'hover:border-[#9ab9a8]',
   },
+  {
+    name: 'Notes',
+    description: 'Keep ideas, lists, decisions, and anything useful.',
+    icon: FiFileText,
+    to: '/notes',
+    color: 'bg-[#eee8f7] text-[#654b91]',
+    accent: 'bg-[#8268ad]',
+    action: 'bg-[#f4f0fa] text-[#654b91] group-hover:bg-[#eee8f7]',
+    hover: 'hover:border-[#b7a5d2]',
+  },
 ]
 
 const plannedWorkAreas = [
@@ -58,11 +68,6 @@ const plannedWorkAreas = [
     name: 'Research',
     icon: FiCompass,
     color: 'bg-[#e9e2f5] text-[#5c478c]',
-  },
-  {
-    name: 'Notes',
-    icon: FiFileText,
-    color: 'bg-[#e4e7e9] text-[#4c5761]',
   },
 ]
 
@@ -192,7 +197,7 @@ function HomePage() {
             </h2>
             <span className="text-[10px] text-[#999]">Select an area</span>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {activeWorkAreas.map(({ name, description, icon: Icon, to, color, accent, action, hover }) => (
               <Link
                 key={name}
@@ -223,7 +228,7 @@ function HomePage() {
           <h2 id="planned-workspaces-title" className="px-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-[#999]">
             Coming later
           </h2>
-          <div className="mt-2 grid grid-cols-3 gap-2">
+          <div className="mt-2 grid grid-cols-2 gap-2">
             {plannedWorkAreas.map(({ name, icon: Icon, color }) => (
               <div key={name} className="flex min-w-0 flex-col items-start gap-2 rounded-md border border-[#dfdcd8] bg-[#f7f6f4] px-2.5 py-2.5 sm:flex-row sm:items-center sm:px-3">
                 <span className={`grid size-7 shrink-0 place-items-center rounded ${color}`}>

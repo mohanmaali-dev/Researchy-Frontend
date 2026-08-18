@@ -186,6 +186,8 @@ const router = createBrowserRouter(
             </Route>
 
             <Route path="/notes" element={<NotesPage />} />
+            <Route path="/notes/new" element={<NotesPage />} />
+            <Route path="/notes/:id" element={<NotesPage />} />
           </Route>
 
           <Route element={<AuthLayout />}>

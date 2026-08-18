@@ -1,6 +1,17 @@
 import { request } from './api.js'
 
-export const getNotes = () => request('get', '/notes')
+const withQuery = (url, params = {}) => {
+  const query = new URLSearchParams()
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') query.set(key, value)
+  })
+  const search = query.toString()
+  return search ? `${url}?${search}` : url
+}
+
+export const getNotes = (params) => request('get', withQuery('/notes', params))
+
+export const getNoteById = (noteId) => request('get', `/notes/${noteId}`)
 
 export const createNote = (data) => request('post', '/notes', data)
 

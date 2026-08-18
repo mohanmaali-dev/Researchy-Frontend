@@ -37,6 +37,9 @@ const pageDetails = (pathname) => {
     return { section: 'Learning', page: 'Learning details' }
   }
 
+  if (pathname === '/notes') return { section: 'Notes', page: 'My notes' }
+  if (/^\/notes\/[^/]+$/.test(pathname)) return { section: 'Notes', page: 'Note editor' }
+
   return null
 }
 

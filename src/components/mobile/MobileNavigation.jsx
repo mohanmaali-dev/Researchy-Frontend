@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FiBookOpen, FiBriefcase, FiDownload, FiHome, FiPlus, FiUsers, FiX } from 'react-icons/fi'
+import { FiBookOpen, FiBriefcase, FiDownload, FiFileText, FiHome, FiPlus, FiUsers, FiX } from 'react-icons/fi'
 import { Link, useLocation } from 'react-router-dom'
 
 import { usePwa } from '../../context/PwaContext.jsx'
@@ -16,6 +16,7 @@ const quickActions = [
   { label: 'Add Contact', description: 'Save a person quickly', to: '/contacts/new', icon: FiUsers },
   { label: 'New Learning Topic', description: 'Choose something to learn', to: '/learning/topics/new', icon: FiBookOpen },
   { label: 'Add Learning Entry', description: 'Record what you understood', to: '/learning/entries/new', icon: FiPlus },
+  { label: 'New Note', description: 'Write down anything useful', to: '/notes/new', icon: FiFileText },
 ]
 
 function MobileNavigation() {
