@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useState } from 'react'
-import { FiBriefcase, FiEdit2, FiMapPin, FiPlus, FiSave, FiTrash2, FiX } from 'react-icons/fi'
+import { FiAward, FiBriefcase, FiEdit2, FiMapPin, FiPlus, FiSave, FiTrash2, FiX } from 'react-icons/fi'
 
 import { ErrorState, LoadingState } from '../../components/businesses/PageState.jsx'
 import PageHeader from '../../components/portfolio/PageHeader.jsx'
+import BulkActions from '../../components/portfolio/BulkActions.jsx'
 import ConfirmModal from '../../components/ui/ConfirmModal.jsx'
 import { FORM_INPUT_CLASS, ServerError } from '../../components/ui/FormElements.jsx'
 import TruncatedText from '../../components/ui/TruncatedText.jsx'
 import { createPortfolioExperience, deletePortfolioExperience, getPortfolioExperiences, updatePortfolioExperience } from '../../services/portfolio.service.js'
+import { useBulkSelection } from '../../hooks/useBulkSelection.js'
 
-const EMPTY_EXPERIENCE = { company: '', position: '', location: '', startDate: '', endDate: '', currentlyWorking: false, description: '', status: 'Published', displayOrder: 0 }
+const EMPTY_EXPERIENCE = { company: '', position: '', location: '', startDate: '', endDate: '', currentlyWorking: false, description: '', achievementsText: '', status: 'Published', displayOrder: 0 }
 const formatMonth = (value) => value ? new Date(`${value}-01T00:00:00Z`).toLocaleDateString(undefined, { month: 'short', year: 'numeric', timeZone: 'UTC' }) : ''
 
 function Experience() {
@@ -21,18 +23,20 @@ function Experience() {
   const [error, setError] = useState('')
   const [formError, setFormError] = useState('')
   const [deleteTarget, setDeleteTarget] = useState(null)
+  const bulk = useBulkSelection(experiences)
 
   const loadExperiences = useCallback(async () => { setLoading(true); setError(''); try { setExperiences((await getPortfolioExperiences()).data) } catch (requestError) { setError(requestError.message) } finally { setLoading(false) } }, [])
   useEffect(() => { loadExperiences() }, [loadExperiences])
   const setField = (field, value) => setForm((current) => ({ ...current, [field]: value }))
   const openNew = () => { setEditingId(''); setForm(EMPTY_EXPERIENCE); setFormError(''); setShowForm(true) }
-  const openEdit = (item) => { setEditingId(item._id); setForm({ ...EMPTY_EXPERIENCE, ...item }); setFormError(''); setShowForm(true); window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  const openEdit = (item) => { setEditingId(item._id); setForm({ ...EMPTY_EXPERIENCE, ...item, achievementsText: (item.achievements || []).join('\n') }); setFormError(''); setShowForm(true); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const closeForm = () => { setShowForm(false); setEditingId(''); setForm(EMPTY_EXPERIENCE); setFormError('') }
   const saveExperience = async (event) => {
     event.preventDefault()
     if (!form.company.trim() || !form.position.trim() || !form.startDate) { setFormError('Company, position, and start date are required'); return }
     setSaving(true); setFormError('')
-    const data = { ...form, endDate: form.currentlyWorking ? '' : form.endDate, displayOrder: Number(form.displayOrder) }
+    const data = { ...form, achievements: form.achievementsText.split('\n').map((item) => item.trim()).filter(Boolean), endDate: form.currentlyWorking ? '' : form.endDate, displayOrder: Number(form.displayOrder) }
+    delete data.achievementsText
     try { await (editingId ? updatePortfolioExperience(editingId, data) : createPortfolioExperience(data)); closeForm(); await loadExperiences() }
     catch (requestError) { setFormError(requestError.message) } finally { setSaving(false) }
   }
@@ -53,10 +57,12 @@ function Experience() {
         <label className="text-sm font-semibold text-[#555]">End date<input type="month" value={form.endDate} onClick={(event) => event.currentTarget.showPicker?.()} onChange={(event) => setField('endDate', event.target.value)} disabled={form.currentlyWorking} className={FORM_INPUT_CLASS} /></label>
         <label className="flex items-start gap-3 rounded-md bg-[#faf9f7] p-3 sm:col-span-2"><input type="checkbox" checked={form.currentlyWorking} onChange={(event) => setField('currentlyWorking', event.target.checked)} className="mt-0.5 size-4 accent-[#f36b4c]" /><span><span className="block text-sm font-semibold text-[#444]">I currently work here</span><span className="block text-xs text-[#888]">The public timeline will show “Present”.</span></span></label>
         <label className="text-sm font-semibold text-[#555] sm:col-span-2">Description<textarea rows="5" value={form.description} onChange={(event) => setField('description', event.target.value)} className={`${FORM_INPUT_CLASS} resize-y`} placeholder="Describe your responsibilities, results, and important work" /></label>
+        <label className="text-sm font-semibold text-[#555] sm:col-span-2">Achievements<textarea rows="4" value={form.achievementsText} onChange={(event) => setField('achievementsText', event.target.value)} className={`${FORM_INPUT_CLASS} resize-y`} placeholder={'Add one achievement per line\nFor example: Improved page speed by 40%'} /><span className="mt-1 block text-xs font-normal text-[#999]">Use one clear, measurable achievement per line.</span></label>
         <label className="text-sm font-semibold text-[#555]">Display order<input type="number" min="0" max="9999" value={form.displayOrder} onChange={(event) => setField('displayOrder', event.target.value)} className={FORM_INPUT_CLASS} /></label>
       </div><ServerError message={formError} /><div className="mt-5 flex justify-end"><button type="submit" disabled={saving} className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-dark disabled:opacity-60 sm:w-auto"><FiSave /> {saving ? 'Saving...' : 'Save experience'}</button></div></form>}
 
       <section className="overflow-hidden rounded-lg bg-white">
+        {experiences.length > 0 && <div className="p-3 pb-0 sm:px-6 sm:pt-4"><BulkActions entity="experiences" label="experience records" items={experiences} getItemLabel={(item) => `${item.position} at ${item.company}`} selected={bulk.selected} selectedIds={bulk.selectedIds} allSelected={bulk.allSelected} visibleCount={bulk.visibleCount} onToggle={bulk.toggle} onToggleAll={bulk.toggleAll} onClear={bulk.clear} onDeleted={loadExperiences} /></div>}
         {error && <p className="mb-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
         {!experiences.length ? <div className="px-4 py-14 text-center sm:px-6"><span className="mx-auto grid size-12 place-items-center rounded-md bg-[#edf5f0] text-xl text-[#2f684f]"><FiBriefcase /></span><h2 className="mt-4 font-semibold">No experience added</h2><p className="mt-1 text-sm text-[#888]">Add a role when you want it shown on your portfolio.</p><button type="button" onClick={openNew} className="mt-4 text-sm font-semibold text-primary-dark">Add your first experience</button></div> : <>
           <div className="flex items-center justify-between px-4 py-4 sm:px-6">
@@ -93,7 +99,7 @@ function Experience() {
                     <p className="mt-1 text-[#888]">to {item.currentlyWorking ? <span className="font-semibold text-emerald-700">Present</span> : formatMonth(item.endDate) || 'Not set'}</p>
                   </div>
                   <span className="inline-flex min-w-0 items-center gap-1.5 text-xs text-[#666]">{item.location ? <><FiMapPin className="shrink-0 text-[#999]" aria-hidden="true" /><TruncatedText value={item.location} /></> : <span className="text-[#aaa]">Not added</span>}</span>
-                  <TruncatedText value={item.description} className="text-sm text-[#666]" emptyLabel="No description" />
+                  <div className="min-w-0"><TruncatedText value={item.description} className="text-sm text-[#666]" emptyLabel="No description" />{item.achievements?.length > 0 && <p className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-amber-700"><FiAward /> {item.achievements.length} {item.achievements.length === 1 ? 'achievement' : 'achievements'}</p>}</div>
                   <span className={`w-fit rounded-full px-2.5 py-1 text-xs font-medium ${item.status === 'Published' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>{item.status}</span>
                   <span className="text-center text-xs font-medium text-[#666]">{item.displayOrder ?? 0}</span>
                   <div className="flex justify-end gap-1">
@@ -124,6 +130,7 @@ function Experience() {
                 {item.location && <span className="inline-flex min-w-0 items-center gap-1"><FiMapPin className="shrink-0" aria-hidden="true" /><span className="truncate">{item.location}</span></span>}
               </div>
               {item.description && <p className="mt-3 line-clamp-2 text-xs leading-5 text-[#666]">{item.description}</p>}
+              {item.achievements?.length > 0 && <div className="mt-3 rounded-md bg-white p-2.5"><p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-amber-700"><FiAward /> Achievements</p>{item.achievements.slice(0, 2).map((achievement) => <p key={achievement} className="mt-1.5 line-clamp-2 text-xs leading-5 text-[#666]">• {achievement}</p>)}{item.achievements.length > 2 && <p className="mt-1 text-[11px] text-[#999]">+{item.achievements.length - 2} more</p>}</div>}
               <div className="mt-3 flex items-center justify-between border-t border-[#e8e5e1] pt-2">
                 <span className="text-[11px] text-[#999]">Display order: {item.displayOrder ?? 0}</span>
                 <div className="flex gap-1">

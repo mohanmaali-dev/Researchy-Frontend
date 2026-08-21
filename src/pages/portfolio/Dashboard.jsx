@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { FaGithub, FaInstagram, FaLinkedin, FaWhatsapp, FaXTwitter } from 'react-icons/fa6'
-import { FiArrowRight, FiBriefcase, FiCheckCircle, FiEdit2, FiExternalLink, FiEye, FiFileText, FiFolder, FiMail, FiMapPin, FiMonitor, FiPhone, FiPlus, FiStar, FiTrendingUp, FiUser, FiX } from 'react-icons/fi'
+import { FiArrowRight, FiBookOpen, FiBriefcase, FiCheckCircle, FiEdit2, FiExternalLink, FiEye, FiFileText, FiFolder, FiLayers, FiMail, FiMapPin, FiMessageSquare, FiMonitor, FiPhone, FiPlus, FiStar, FiTrendingUp, FiUser, FiX } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 
 import { ErrorState, LoadingState } from '../../components/businesses/PageState.jsx'
@@ -9,6 +9,7 @@ import PageHeader from '../../components/portfolio/PageHeader.jsx'
 import StatCard from '../../components/portfolio/StatCard.jsx'
 import CopyButton from '../../components/ui/CopyButton.jsx'
 import { getPortfolioDashboard, getPortfolioProfile, resolvePortfolioImageUrl } from '../../services/portfolio.service.js'
+import { PORTFOLIO_SITE_URL } from '../../utils/portfolio.js'
 
 const statusStyle = { Published: 'bg-emerald-50 text-emerald-700', Draft: 'bg-amber-50 text-amber-700' }
 
@@ -102,7 +103,7 @@ function Dashboard() {
       <PageHeader title="Portfolio overview" description="Manage the content shown on your developer portfolio.">
         <button type="button" onClick={openProfileDetails} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-[#ddd9d5] bg-white px-3.5 py-2 text-sm font-medium text-[#555] hover:bg-[#f7f7f7]"><FiEye aria-hidden="true" /> Profile details</button>
         <Link to="/portfolio/preview" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-[#ddd9d5] bg-white px-3.5 py-2 text-sm font-medium text-[#555] hover:bg-[#f7f7f7]"><FiMonitor aria-hidden="true" /> Preview</Link>
-        <a href="https://mohanmaali.vercel.app/" target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-[#ddd9d5] bg-white px-3.5 py-2 text-sm font-medium text-[#555] hover:bg-[#f7f7f7]">View live site <FiArrowRight aria-hidden="true" /></a>
+        {PORTFOLIO_SITE_URL && <a href={PORTFOLIO_SITE_URL} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-[#ddd9d5] bg-white px-3.5 py-2 text-sm font-medium text-[#555] hover:bg-[#f7f7f7]">View live site <FiArrowRight aria-hidden="true" /></a>}
         <Link to="/portfolio/projects/new" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-dark"><FiPlus aria-hidden="true" /> Add project</Link>
       </PageHeader>
 
@@ -140,7 +141,10 @@ function Dashboard() {
               ['/portfolio/profile', FiUser, 'Profile', summary?.profile?.fullName || 'Add your introduction'],
               ['/portfolio/contact', FiMail, 'Contact messages', 'View visitor enquiries'],
               ['/portfolio/skills', FiStar, 'Skills', 'Manage technologies'],
+              ['/portfolio/services', FiLayers, 'Services', `${counts.services || 0} services`],
+              ['/portfolio/testimonials', FiMessageSquare, 'Testimonials', `${counts.testimonials || 0} testimonials`],
               ['/portfolio/experience', FiBriefcase, 'Experience', 'Manage your work history'],
+              ['/portfolio/education', FiBookOpen, 'Education & certifications', `${counts.educations || 0} education · ${counts.certifications || 0} certifications`],
             ].map(([to, Icon, label, detail]) => <Link key={to} to={to} className="group flex items-center gap-3 rounded-md bg-[#f7f7f7] p-3 transition hover:bg-[#f0efed]"><Icon className="text-primary-dark" aria-hidden="true" /><span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-[#333]">{label}</span><span className="block truncate text-xs text-[#888]">{detail}</span></span><FiArrowRight className="text-[#aaa] transition group-hover:translate-x-0.5" /></Link>)}
           </div>
           {publicEndpoint && <div className="mt-4 rounded-md bg-[#f7f7f7] p-3"><p className="text-xs font-semibold text-[#444]">Future website integration</p><p className="mt-1 text-[11px] leading-5 text-[#888]">These endpoints are ready when you connect the public website later.</p><div className="mt-3 space-y-2.5"><div><p className="text-[10px] font-semibold uppercase tracking-wider text-[#999]">Portfolio data</p><div className="mt-1 flex min-w-0 items-center gap-1"><p className="min-w-0 flex-1 truncate text-[11px] text-[#666]" title={publicEndpoint}>{compactUrl(publicEndpoint)}</p><CopyButton value={publicEndpoint} label="Copy endpoint" className="size-8 bg-white" /></div></div><div><p className="text-[10px] font-semibold uppercase tracking-wider text-[#999]">Contact form</p><div className="mt-1 flex min-w-0 items-center gap-1"><p className="min-w-0 flex-1 truncate text-[11px] text-[#666]" title={contactEndpoint}>{compactUrl(contactEndpoint)}</p><CopyButton value={contactEndpoint} label="Copy endpoint" className="size-8 bg-white" /></div></div><p className="text-[10px] text-[#999]">Profile ID: <span className="font-medium text-[#666]">{summary.profile._id}</span></p></div></div>}

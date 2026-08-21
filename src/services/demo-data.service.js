@@ -5,3 +5,5 @@ export const createDemoData = () => request('post', '/demo-data', undefined, { s
 export const createDemoContacts = () => request('post', '/demo-data/contacts', undefined, { successFeedback: false })
 
 export const createDemoLearningData = () => request('post', '/demo-data/learning', undefined, { successFeedback: false })
+
+export const createDemoPortfolioData = () => request('post', '/demo-data/portfolio', undefined, { successFeedback: false })

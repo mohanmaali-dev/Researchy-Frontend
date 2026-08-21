@@ -5,9 +5,11 @@ import { useSearchParams } from 'react-router-dom'
 
 import { ErrorState, TableLoadingState } from '../../components/businesses/PageState.jsx'
 import PageHeader from '../../components/portfolio/PageHeader.jsx'
+import BulkActions from '../../components/portfolio/BulkActions.jsx'
 import ConfirmModal from '../../components/ui/ConfirmModal.jsx'
 import CopyButton from '../../components/ui/CopyButton.jsx'
 import TruncatedText from '../../components/ui/TruncatedText.jsx'
+import { useBulkSelection } from '../../hooks/useBulkSelection.js'
 import { deletePortfolioContactMessage, getPortfolioContactMessages, updatePortfolioContactMessage } from '../../services/portfolio.service.js'
 
 const desktopColumns = 'minmax(10rem,1.1fr) minmax(13rem,1.3fr) minmax(10rem,1fr) minmax(15rem,1.8fr) 7rem 6rem 4.5rem'
@@ -62,6 +64,7 @@ function Contact() {
   const status = searchParams.get('status') || 'All'
   const rawPage = Number(searchParams.get('page'))
   const page = Number.isInteger(rawPage) && rawPage > 0 ? rawPage : 1
+  const bulk = useBulkSelection(messages)
 
   const loadMessages = useCallback(async () => {
     setLoading(true); setError('')
@@ -120,6 +123,7 @@ function Contact() {
           <label className="flex h-10 items-center gap-3 rounded-md border border-[#d9d6d2] bg-white px-3 text-[#777] transition-colors focus-within:border-primary/60 focus-within:text-primary-dark"><FiSearch /><input value={search} onChange={(event) => updateParam('search', event.target.value)} className="global-search-input min-w-0 flex-1 border-0 bg-transparent text-sm text-[#222] outline-none placeholder:text-[#999]" placeholder="Search messages" /></label>
           <label className="relative"><span className="sr-only">Message status</span><select value={status} onChange={(event) => updateParam('status', event.target.value)} className="h-10 w-full appearance-none rounded-md border border-[#d9d6d2] bg-white px-3 pr-9 text-sm text-[#333] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/5"><option>All</option><option>New</option><option>Read</option></select><FiChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#777]" /></label>
         </div>
+        {messages.length > 0 && <div className="mt-3"><BulkActions entity="contactMessages" label="contact messages" items={messages} getItemLabel={(item) => `${item.fullName}: ${item.subject || 'Portfolio enquiry'}`} selected={bulk.selected} selectedIds={bulk.selectedIds} allSelected={bulk.allSelected} visibleCount={bulk.visibleCount} onToggle={bulk.toggle} onToggleAll={bulk.toggleAll} onClear={bulk.clear} onDeleted={async () => { await loadMessages(); window.dispatchEvent(new Event('portfolio:messages-changed')) }} /></div>}
 
         <div className="mt-4">
           {loading ? <TableLoadingState label="Loading contact messages" headers={['Visitor', 'Contact', 'Subject', 'Message', 'Received', 'Status', '']} template={desktopColumns} minWidth="1060px" /> : error && !messages.length ? <ErrorState message={error} onRetry={loadMessages} backTo="/portfolio" backLabel="Portfolio overview" /> : !messages.length ? (

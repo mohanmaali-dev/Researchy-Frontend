@@ -1,16 +1,20 @@
 import { useEffect, useState } from 'react'
-import { FiBriefcase, FiExternalLink, FiFolder, FiGrid, FiMail, FiMenu, FiMonitor, FiStar, FiUser, FiX } from 'react-icons/fi'
+import { FiBookOpen, FiBriefcase, FiDatabase, FiExternalLink, FiFolder, FiGrid, FiLayers, FiMail, FiMenu, FiMessageSquare, FiMonitor, FiStar, FiUser, FiX } from 'react-icons/fi'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 
 import AccountMenu from '../../components/ui/AccountMenu.jsx'
 import GlobalSearchButton from '../../components/ui/GlobalSearchButton.jsx'
 import { getPortfolioContactMessages } from '../../services/portfolio.service.js'
+import { PORTFOLIO_SITE_URL } from '../../utils/portfolio.js'
 
 const navigation = [
   { to: '/portfolio', label: 'Overview', icon: FiGrid, end: true },
   { to: '/portfolio/projects', label: 'Projects', icon: FiFolder },
+  { to: '/portfolio/services', label: 'Services', icon: FiLayers },
+  { to: '/portfolio/testimonials', label: 'Testimonials', icon: FiMessageSquare },
   { to: '/portfolio/skills', label: 'Skills', icon: FiStar },
   { to: '/portfolio/experience', label: 'Experience', icon: FiBriefcase },
+  { to: '/portfolio/education', label: 'Education', icon: FiBookOpen },
   { to: '/portfolio/profile', label: 'Profile', icon: FiUser },
   { to: '/portfolio/contact', label: 'Messages', icon: FiMail },
   { to: '/portfolio/preview', label: 'Preview', icon: FiMonitor },
@@ -54,7 +58,7 @@ function PortfolioLayout() {
           <div className="mb-3 flex items-center justify-between px-1 lg:hidden"><span className="font-medium">Navigation</span><button type="button" onClick={() => setSidebarOpen(false)} className="grid size-9 place-items-center rounded-full bg-[#f5f5f5]" aria-label="Close menu"><FiX aria-hidden="true" /></button></div>
           <p className="px-2 pb-2 text-xs font-medium uppercase tracking-wider text-[#999]">Portfolio workspace</p>
           <nav className="space-y-1" aria-label="Portfolio navigation">{navigation.map(({ to, label, icon: Icon, end }) => <NavLink key={to} to={to} end={end} className={linkClassName}><Icon aria-hidden="true" /> <span className="flex-1">{label}</span>{to === '/portfolio/contact' && newMessageCount > 0 && <span className="min-w-5 rounded-full bg-primary px-1.5 py-0.5 text-center text-[10px] font-semibold text-white">{newMessageCount > 99 ? '99+' : newMessageCount}</span>}</NavLink>)}</nav>
-          <div className="mt-auto pt-6"><a href="https://mohanmaali.vercel.app/" target="_blank" rel="noreferrer" className="flex items-center gap-3 rounded-md bg-[#f7f7f7] px-3.5 py-2.5 text-sm font-medium text-[#555] transition hover:bg-[#efefed] hover:text-[#222]"><FiExternalLink aria-hidden="true" /> View live portfolio</a></div>
+          <div className="mt-auto space-y-1 pt-6"><NavLink to="/portfolio/demo-data" className={linkClassName}><FiDatabase aria-hidden="true" /> <span>Demo data</span></NavLink>{PORTFOLIO_SITE_URL && <a href={PORTFOLIO_SITE_URL} target="_blank" rel="noreferrer" className="flex items-center gap-3 rounded-md bg-[#f7f7f7] px-3.5 py-2.5 text-sm font-medium text-[#555] transition hover:bg-[#efefed] hover:text-[#222]"><FiExternalLink aria-hidden="true" /> View live portfolio</a>}</div>
         </aside>
         <main id="main-content" tabIndex="-1" className="workspace-content min-w-0 max-w-full flex-1"><Outlet /></main>
       </div>

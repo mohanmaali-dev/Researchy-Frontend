@@ -75,6 +75,10 @@ const PortfolioSkills = lazy(() => import('./pages/portfolio/Skills.jsx'))
 const PortfolioExperience = lazy(() => import('./pages/portfolio/Experience.jsx'))
 const PortfolioProfile = lazy(() => import('./pages/portfolio/Profile.jsx'))
 const PortfolioContact = lazy(() => import('./pages/portfolio/Contact.jsx'))
+const PortfolioEducation = lazy(() => import('./pages/portfolio/Education.jsx'))
+const PortfolioServices = lazy(() => import('./pages/portfolio/Services.jsx'))
+const PortfolioTestimonials = lazy(() => import('./pages/portfolio/Testimonials.jsx'))
+const PortfolioDemoData = lazy(() => import('./pages/portfolio/PortfolioDemoData.jsx'))
 const PortfolioPreview = lazy(() => import('./pages/portfolio/Preview.jsx'))
 
 function RouteLoading() {
@@ -207,6 +211,10 @@ const router = createBrowserRouter(
           <Route path="experience" element={<PortfolioExperience />} />
           <Route path="profile" element={<PortfolioProfile />} />
           <Route path="contact" element={<PortfolioContact />} />
+          <Route path="education" element={<PortfolioEducation />} />
+          <Route path="services" element={<PortfolioServices />} />
+          <Route path="testimonials" element={<PortfolioTestimonials />} />
+          <Route path="demo-data" element={<PortfolioDemoData />} />
           <Route path="preview" element={<PortfolioPreview />} />
         </Route>
       </Route>

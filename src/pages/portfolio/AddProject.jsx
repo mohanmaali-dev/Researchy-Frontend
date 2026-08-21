@@ -14,10 +14,16 @@ import { useFormDraft } from '../../hooks/useFormDraft.js'
 import { createPortfolioProject, getPortfolioProject, resolvePortfolioImageUrl, updatePortfolioProject } from '../../services/portfolio.service.js'
 
 const optionalUrl = z.string().trim().max(1000, 'Web address is too long').refine((value) => !value || /^https?:\/\//i.test(value), 'Enter a full web address beginning with http:// or https://')
+const PROJECT_TYPES = ['E-commerce', 'LMS', 'SaaS', 'Portfolio', 'Business Website', 'Dashboard', 'Mobile App', 'API / Backend', 'Other']
+const PROJECT_SOURCES = ['Personal Project', 'Client Project', 'Company Project', 'Collaborative Project']
 const projectSchema = z.object({
   title: z.string().trim().min(1, 'Project title is required').max(180, 'Project title is too long'),
   shortDescription: z.string().trim().min(1, 'Short description is required').max(400, 'Short description is too long'),
   description: z.string().trim().max(15000, 'Description is too long'),
+  projectType: z.enum(PROJECT_TYPES),
+  customProjectType: z.string().trim().max(120, 'Custom project type is too long'),
+  projectSource: z.enum(PROJECT_SOURCES),
+  organizationName: z.string().trim().max(180, 'Client or company name is too long'),
   technologies: z.string().trim(),
   githubUrl: optionalUrl,
   liveUrl: optionalUrl,
@@ -26,9 +32,11 @@ const projectSchema = z.object({
   status: z.enum(['Draft', 'Published']),
   featured: z.boolean(),
   displayOrder: z.coerce.number().int('Display order must be a whole number').min(0).max(9999),
+}).superRefine((values, context) => {
+  if (values.projectType === 'Other' && !values.customProjectType) context.addIssue({ code: 'custom', path: ['customProjectType'], message: 'Enter the project type' })
 })
 
-const EMPTY_PROJECT = { title: '', shortDescription: '', description: '', technologies: '', githubUrl: '', liveUrl: '', imageUrl: '', imageAction: 'keep', status: 'Draft', featured: false, displayOrder: 0 }
+const EMPTY_PROJECT = { title: '', shortDescription: '', description: '', projectType: 'Other', customProjectType: '', projectSource: 'Personal Project', organizationName: '', technologies: '', githubUrl: '', liveUrl: '', imageUrl: '', imageAction: 'keep', status: 'Draft', featured: false, displayOrder: 0 }
 
 function ProjectForm({ projectId, initialValues }) {
   const navigate = useNavigate()
@@ -57,6 +65,8 @@ function ProjectForm({ projectId, initialValues }) {
 
   const imageUrl = watch('imageUrl')
   const imageAction = watch('imageAction')
+  const projectType = watch('projectType')
+  const projectSource = watch('projectSource')
   const previewUrl = imagePreview || (imageAction === 'keep' ? resolvePortfolioImageUrl(imageUrl) : '')
   const chooseImage = (event) => {
     const file = event.target.files?.[0]
@@ -100,6 +110,12 @@ function ProjectForm({ projectId, initialValues }) {
             <div className="mt-5 grid gap-4">
               <label className="text-sm font-semibold text-[#555]">Project title <span className="text-red-500">*</span><input {...register('title')} className={FORM_INPUT_CLASS} placeholder="Enter project title" /><FieldError message={errors.title?.message} /></label>
               <label className="text-sm font-semibold text-[#555]">Short description <span className="text-red-500">*</span><input {...register('shortDescription')} className={FORM_INPUT_CLASS} placeholder="Summarise the project in one sentence" /><FieldError message={errors.shortDescription?.message} /></label>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="block text-sm font-semibold text-[#555]">Project type<FormSelect name="projectType" control={control} options={PROJECT_TYPES} className="mt-1.5" /><FieldError message={errors.projectType?.message} /></label>
+                <label className="block text-sm font-semibold text-[#555]">Built as<FormSelect name="projectSource" control={control} options={PROJECT_SOURCES} className="mt-1.5" /><FieldError message={errors.projectSource?.message} /></label>
+                {projectType === 'Other' && <label className="text-sm font-semibold text-[#555]">Custom project type <span className="text-red-500">*</span><input {...register('customProjectType')} className={FORM_INPUT_CLASS} placeholder="Enter project type" /><FieldError message={errors.customProjectType?.message} /></label>}
+                {projectSource !== 'Personal Project' && <label className="text-sm font-semibold text-[#555]">Client or company name<input {...register('organizationName')} className={FORM_INPUT_CLASS} placeholder="Enter client, company, or team name" /><FieldError message={errors.organizationName?.message} /></label>}
+              </div>
               <label className="text-sm font-semibold text-[#555]">Full description<textarea {...register('description')} rows="7" className={`${FORM_INPUT_CLASS} resize-y`} placeholder="Explain the problem, your solution, and important results" /><FieldError message={errors.description?.message} /></label>
             </div>
           </section>

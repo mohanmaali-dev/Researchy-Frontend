@@ -12,6 +12,7 @@ import DraftStatus from '../../components/ui/DraftStatus.jsx'
 import { FieldError, FORM_INPUT_CLASS, ServerError } from '../../components/ui/FormElements.jsx'
 import { useFormDraft } from '../../hooks/useFormDraft.js'
 import { getPortfolioProfile, resolvePortfolioImageUrl, savePortfolioProfile } from '../../services/portfolio.service.js'
+import { PORTFOLIO_SITE_URL } from '../../utils/portfolio.js'
 
 const optionalUrl = z.string().trim().max(1000, 'Web address is too long').refine((value) => !value || /^https?:\/\//i.test(value), 'Enter a full web address beginning with http:// or https://')
 const optionalText = (limit, message) => z.string().trim().max(limit, message)
@@ -398,7 +399,7 @@ function Profile() {
   useEffect(() => { loadProfile() }, [loadProfile])
   if (!loaded) return <LoadingState label="Loading portfolio profile" />
   if (error) return <ErrorState message={error} onRetry={loadProfile} backTo="/portfolio" backLabel="Portfolio overview" />
-  return <div className="space-y-3"><PageHeader title="Profile" description="Manage your public introduction, contact details, resume, and social links."><a href="https://mohanmaali.vercel.app/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md border border-[#ddd9d5] bg-white px-3.5 py-2 text-sm font-medium text-[#555] hover:bg-[#f7f7f7]">View live profile <FiExternalLink /></a></PageHeader><ProfileForm initialValues={{ ...EMPTY_PROFILE, ...(profile || {}), profileImageAction: 'keep', resumeAction: 'keep' }} /></div>
+  return <div className="space-y-3"><PageHeader title="Profile" description="Manage your public introduction, contact details, resume, and social links.">{PORTFOLIO_SITE_URL && <a href={PORTFOLIO_SITE_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md border border-[#ddd9d5] bg-white px-3.5 py-2 text-sm font-medium text-[#555] hover:bg-[#f7f7f7]">View live profile <FiExternalLink /></a>}</PageHeader><ProfileForm initialValues={{ ...EMPTY_PROFILE, ...(profile || {}), profileImageAction: 'keep', resumeAction: 'keep' }} /></div>
 }
 
 export default Profile

@@ -11,6 +11,7 @@ const queryString = (params = {}) => {
 export const getPortfolioDashboard = () => request('get', '/portfolio/dashboard')
 export const getPortfolioProfile = () => request('get', '/portfolio/profile')
 export const getPublicPortfolio = (profileId) => request('get', `/portfolio/public/${profileId}`)
+export const bulkDeletePortfolio = (entity, ids) => request('post', '/portfolio/bulk-delete', { entity, ids })
 
 const profileFormData = (data, imageFile, resumeFile) => {
   const formData = new FormData()
@@ -39,7 +40,7 @@ export const getPortfolioProject = (projectId) => request('get', `/portfolio/pro
 
 const projectFormData = (data, imageFile) => {
   const formData = new FormData()
-  const fields = ['title', 'shortDescription', 'description', 'githubUrl', 'liveUrl', 'status', 'featured', 'displayOrder']
+  const fields = ['title', 'shortDescription', 'description', 'projectType', 'customProjectType', 'projectSource', 'organizationName', 'githubUrl', 'liveUrl', 'status', 'featured', 'displayOrder']
   fields.forEach((field) => formData.append(field, data[field] ?? ''))
   formData.append('technologies', Array.isArray(data.technologies) ? data.technologies.join(',') : data.technologies || '')
   if (data.imageAction === 'remove') formData.append('removeImage', 'true')
@@ -69,3 +70,29 @@ export const getPortfolioExperiences = () => request('get', '/portfolio/experien
 export const createPortfolioExperience = (data) => request('post', '/portfolio/experiences', data)
 export const updatePortfolioExperience = (experienceId, data) => request('patch', `/portfolio/experiences/${experienceId}`, data)
 export const deletePortfolioExperience = (experienceId) => request('delete', `/portfolio/experiences/${experienceId}`)
+export const getPortfolioEducations = () => request('get', '/portfolio/educations')
+export const createPortfolioEducation = (data) => request('post', '/portfolio/educations', data)
+export const updatePortfolioEducation = (educationId, data) => request('patch', `/portfolio/educations/${educationId}`, data)
+export const deletePortfolioEducation = (educationId) => request('delete', `/portfolio/educations/${educationId}`)
+export const getPortfolioCertifications = () => request('get', '/portfolio/certifications')
+export const createPortfolioCertification = (data) => request('post', '/portfolio/certifications', data)
+export const updatePortfolioCertification = (certificationId, data) => request('patch', `/portfolio/certifications/${certificationId}`, data)
+export const deletePortfolioCertification = (certificationId) => request('delete', `/portfolio/certifications/${certificationId}`)
+export const getPortfolioServices = () => request('get', '/portfolio/services')
+export const createPortfolioService = (data) => request('post', '/portfolio/services', data)
+export const updatePortfolioService = (serviceId, data) => request('patch', `/portfolio/services/${serviceId}`, data)
+export const deletePortfolioService = (serviceId) => request('delete', `/portfolio/services/${serviceId}`)
+
+const testimonialFormData = (data, imageFile) => {
+  const formData = new FormData()
+  const fields = ['personName', 'personRole', 'company', 'message', 'featured', 'status', 'displayOrder']
+  fields.forEach((field) => formData.append(field, data[field] ?? ''))
+  if (data.imageAction === 'remove') formData.append('removeImage', 'true')
+  if (imageFile) formData.append('image', imageFile)
+  return formData
+}
+
+export const getPortfolioTestimonials = () => request('get', '/portfolio/testimonials')
+export const createPortfolioTestimonial = (data, imageFile) => request('post', '/portfolio/testimonials', testimonialFormData(data, imageFile))
+export const updatePortfolioTestimonial = (testimonialId, data, imageFile) => request('patch', `/portfolio/testimonials/${testimonialId}`, testimonialFormData(data, imageFile))
+export const deletePortfolioTestimonial = (testimonialId) => request('delete', `/portfolio/testimonials/${testimonialId}`)

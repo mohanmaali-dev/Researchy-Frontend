@@ -44,6 +44,9 @@ const pageDetails = (pathname) => {
   if (pathname === '/portfolio/projects') return { section: 'Portfolio', page: 'Portfolio projects' }
   if (pathname === '/portfolio/skills') return { section: 'Portfolio', page: 'Portfolio skills' }
   if (pathname === '/portfolio/experience') return { section: 'Portfolio', page: 'Portfolio experience' }
+  if (pathname === '/portfolio/education') return { section: 'Portfolio', page: 'Education and certifications' }
+  if (pathname === '/portfolio/services') return { section: 'Portfolio', page: 'Services' }
+  if (pathname === '/portfolio/testimonials') return { section: 'Portfolio', page: 'Testimonials' }
   if (pathname === '/portfolio/profile') return { section: 'Portfolio', page: 'Portfolio profile' }
   if (pathname === '/portfolio/contact') return { section: 'Portfolio', page: 'Contact messages' }
   if (pathname === '/portfolio/preview') return { section: 'Portfolio', page: 'Portfolio preview' }
