@@ -40,6 +40,14 @@ const pageDetails = (pathname) => {
   if (pathname === '/notes') return { section: 'Notes', page: 'My notes' }
   if (/^\/notes\/[^/]+$/.test(pathname)) return { section: 'Notes', page: 'Note editor' }
 
+  if (pathname === '/portfolio') return { section: 'Portfolio', page: 'Portfolio overview' }
+  if (pathname === '/portfolio/projects') return { section: 'Portfolio', page: 'Portfolio projects' }
+  if (pathname === '/portfolio/skills') return { section: 'Portfolio', page: 'Portfolio skills' }
+  if (pathname === '/portfolio/experience') return { section: 'Portfolio', page: 'Portfolio experience' }
+  if (pathname === '/portfolio/profile') return { section: 'Portfolio', page: 'Portfolio profile' }
+  if (pathname === '/portfolio/contact') return { section: 'Portfolio', page: 'Contact messages' }
+  if (pathname === '/portfolio/preview') return { section: 'Portfolio', page: 'Portfolio preview' }
+
   return null
 }
 

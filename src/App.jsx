@@ -67,6 +67,15 @@ const EditProblemPage = lazy(() => import('./pages/problems/EditProblemPage.jsx'
 const ProblemDetailsPage = lazy(() => import('./pages/problems/ProblemDetailsPage.jsx'))
 const ProblemPatternDetailsPage = lazy(() => import('./pages/problems/ProblemPatternDetailsPage.jsx'))
 const ProblemPatternsPage = lazy(() => import('./pages/problems/ProblemPatternsPage.jsx'))
+const PortfolioLayout = lazy(() => import('./pages/portfolio/PortfolioLayout.jsx'))
+const PortfolioDashboard = lazy(() => import('./pages/portfolio/Dashboard.jsx'))
+const PortfolioProjects = lazy(() => import('./pages/portfolio/Projects.jsx'))
+const PortfolioProjectEditor = lazy(() => import('./pages/portfolio/AddProject.jsx'))
+const PortfolioSkills = lazy(() => import('./pages/portfolio/Skills.jsx'))
+const PortfolioExperience = lazy(() => import('./pages/portfolio/Experience.jsx'))
+const PortfolioProfile = lazy(() => import('./pages/portfolio/Profile.jsx'))
+const PortfolioContact = lazy(() => import('./pages/portfolio/Contact.jsx'))
+const PortfolioPreview = lazy(() => import('./pages/portfolio/Preview.jsx'))
 
 function RouteLoading() {
   return (
@@ -90,9 +99,9 @@ function AppProviders() {
       <ToastProvider>
         <NavigationFeedback />
         <GlobalErrorBoundary>
-        <Suspense fallback={<RouteLoading />}>
-          <Outlet />
-        </Suspense>
+          <Suspense fallback={<RouteLoading />}>
+            <Outlet />
+          </Suspense>
         </GlobalErrorBoundary>
       </ToastProvider>
     </AuthProvider>
@@ -102,101 +111,113 @@ function AppProviders() {
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<AppProviders />} errorElement={<RouteErrorRecovery />}>
-          <Route path="/" element={<Navigate to="/home" replace />} />
-          <Route path="/check-email" element={<CheckEmailPage />} />
+      <Route path="/" element={<Navigate to="/home" replace />} />
+      <Route path="/check-email" element={<CheckEmailPage />} />
 
-          <Route element={<ProtectedRoute />}>
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/sessions" element={<SessionsPage />} />
-            <Route path="/settings/data" element={<DataSettingsPage />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/sessions" element={<SessionsPage />} />
+        <Route path="/settings/data" element={<DataSettingsPage />} />
 
-            <Route element={<BusinessLayout />}>
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/how-it-works" element={<HowItWorksPage />} />
-              <Route path="/demo-data" element={<DemoDataPage />} />
-              <Route path="/businesses" element={<BusinessListPage />} />
-              <Route path="/businesses/new" element={<AddBusinessPage />} />
-              <Route path="/businesses/:id" element={<BusinessDetailsPage />} />
-              <Route path="/businesses/:id/edit" element={<EditBusinessPage />} />
-              <Route
-                path="/businesses/:businessId/conversations/new"
-                element={<AddConversationPage />}
-              />
-              <Route path="/conversations/:id" element={<ConversationDetailsPage />} />
-              <Route path="/conversations/:id/edit" element={<EditConversationPage />} />
-              <Route
-                path="/conversations/:conversationId/problems/new"
-                element={<AddProblemPage />}
-              />
-              <Route path="/problems/:id" element={<ProblemDetailsPage />} />
-              <Route path="/problems/:id/edit" element={<EditProblemPage />} />
-              <Route path="/problem-patterns" element={<ProblemPatternsPage />} />
-              <Route
-                path="/problem-patterns/details/:type"
-                element={<ProblemPatternDetailsPage />}
-              />
-              <Route
-                path="/problems/:problemId/opportunity/new"
-                element={<AddOpportunityPage />}
-              />
-              <Route path="/opportunities" element={<OpportunityListPage />} />
-              <Route path="/opportunities/:id" element={<OpportunityDetailsPage />} />
-              <Route path="/opportunities/:id/edit" element={<EditOpportunityPage />} />
-              <Route path="/follow-ups" element={<FollowUpListPage />} />
-              <Route path="/follow-ups/new" element={<AddFollowUpPage />} />
-              <Route path="/follow-ups/:id" element={<FollowUpDetailsPage />} />
-              <Route path="/follow-ups/:id/edit" element={<EditFollowUpPage />} />
-            </Route>
+        <Route element={<BusinessLayout />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/how-it-works" element={<HowItWorksPage />} />
+          <Route path="/demo-data" element={<DemoDataPage />} />
+          <Route path="/businesses" element={<BusinessListPage />} />
+          <Route path="/businesses/new" element={<AddBusinessPage />} />
+          <Route path="/businesses/:id" element={<BusinessDetailsPage />} />
+          <Route path="/businesses/:id/edit" element={<EditBusinessPage />} />
+          <Route
+            path="/businesses/:businessId/conversations/new"
+            element={<AddConversationPage />}
+          />
+          <Route path="/conversations/:id" element={<ConversationDetailsPage />} />
+          <Route path="/conversations/:id/edit" element={<EditConversationPage />} />
+          <Route
+            path="/conversations/:conversationId/problems/new"
+            element={<AddProblemPage />}
+          />
+          <Route path="/problems/:id" element={<ProblemDetailsPage />} />
+          <Route path="/problems/:id/edit" element={<EditProblemPage />} />
+          <Route path="/problem-patterns" element={<ProblemPatternsPage />} />
+          <Route
+            path="/problem-patterns/details/:type"
+            element={<ProblemPatternDetailsPage />}
+          />
+          <Route
+            path="/problems/:problemId/opportunity/new"
+            element={<AddOpportunityPage />}
+          />
+          <Route path="/opportunities" element={<OpportunityListPage />} />
+          <Route path="/opportunities/:id" element={<OpportunityDetailsPage />} />
+          <Route path="/opportunities/:id/edit" element={<EditOpportunityPage />} />
+          <Route path="/follow-ups" element={<FollowUpListPage />} />
+          <Route path="/follow-ups/new" element={<AddFollowUpPage />} />
+          <Route path="/follow-ups/:id" element={<FollowUpDetailsPage />} />
+          <Route path="/follow-ups/:id/edit" element={<EditFollowUpPage />} />
+        </Route>
 
-            <Route element={<ContactsLayout />}>
-              <Route path="/contacts" element={<ContactListPage />} />
-              <Route path="/contacts/demo-data" element={<ContactDemoDataPage />} />
-              <Route path="/contacts/new" element={<AddContactPage />} />
-              <Route path="/contacts/:id" element={<ContactDetailsPage />} />
-              <Route path="/contacts/:id/edit" element={<EditContactPage />} />
-            </Route>
+        <Route element={<ContactsLayout />}>
+          <Route path="/contacts" element={<ContactListPage />} />
+          <Route path="/contacts/demo-data" element={<ContactDemoDataPage />} />
+          <Route path="/contacts/new" element={<AddContactPage />} />
+          <Route path="/contacts/:id" element={<ContactDetailsPage />} />
+          <Route path="/contacts/:id/edit" element={<EditContactPage />} />
+        </Route>
 
-            <Route element={<LearningLayout />}>
-              <Route path="/learning" element={<LearningDashboardPage />} />
-              <Route path="/learning/demo-data" element={<LearningDemoDataPage />} />
-              <Route path="/learning/archived" element={<ArchivedTopicsPage />} />
-              <Route path="/learning/topics" element={<TopicListPage />} />
-              <Route path="/learning/topics/new" element={<TopicEditorPage mode="create" />} />
-              <Route path="/learning/topics/:id" element={<TopicDetailsPage />} />
-              <Route path="/learning/topics/:id/edit" element={<TopicEditorPage mode="edit" />} />
+        <Route element={<LearningLayout />}>
+          <Route path="/learning" element={<LearningDashboardPage />} />
+          <Route path="/learning/demo-data" element={<LearningDemoDataPage />} />
+          <Route path="/learning/archived" element={<ArchivedTopicsPage />} />
+          <Route path="/learning/topics" element={<TopicListPage />} />
+          <Route path="/learning/topics/new" element={<TopicEditorPage mode="create" />} />
+          <Route path="/learning/topics/:id" element={<TopicDetailsPage />} />
+          <Route path="/learning/topics/:id/edit" element={<TopicEditorPage mode="edit" />} />
 
-              <Route path="/learning/entries/new" element={<LearningRecordEditorPage type="entry" mode="create" />} />
-              <Route path="/learning/entries/:id" element={<LearningRecordDetailsPage type="entry" />} />
-              <Route path="/learning/entries/:id/edit" element={<LearningRecordEditorPage type="entry" mode="edit" />} />
+          <Route path="/learning/entries/new" element={<LearningRecordEditorPage type="entry" mode="create" />} />
+          <Route path="/learning/entries/:id" element={<LearningRecordDetailsPage type="entry" />} />
+          <Route path="/learning/entries/:id/edit" element={<LearningRecordEditorPage type="entry" mode="edit" />} />
 
-              <Route path="/learning/resources" element={<LearningCollectionPage type="resources" />} />
-              <Route path="/learning/resources/new" element={<LearningRecordEditorPage type="resource" mode="create" />} />
-              <Route path="/learning/resources/:id" element={<LearningRecordDetailsPage type="resource" />} />
-              <Route path="/learning/resources/:id/edit" element={<LearningRecordEditorPage type="resource" mode="edit" />} />
+          <Route path="/learning/resources" element={<LearningCollectionPage type="resources" />} />
+          <Route path="/learning/resources/new" element={<LearningRecordEditorPage type="resource" mode="create" />} />
+          <Route path="/learning/resources/:id" element={<LearningRecordDetailsPage type="resource" />} />
+          <Route path="/learning/resources/:id/edit" element={<LearningRecordEditorPage type="resource" mode="edit" />} />
 
-              <Route path="/learning/practice/new" element={<LearningRecordEditorPage type="practice" mode="create" />} />
-              <Route path="/learning/practice/:id" element={<LearningRecordDetailsPage type="practice" />} />
-              <Route path="/learning/practice/:id/edit" element={<LearningRecordEditorPage type="practice" mode="edit" />} />
+          <Route path="/learning/practice/new" element={<LearningRecordEditorPage type="practice" mode="create" />} />
+          <Route path="/learning/practice/:id" element={<LearningRecordDetailsPage type="practice" />} />
+          <Route path="/learning/practice/:id/edit" element={<LearningRecordEditorPage type="practice" mode="edit" />} />
 
-              <Route path="/learning/questions" element={<LearningCollectionPage type="questions" />} />
-              <Route path="/learning/questions/new" element={<LearningRecordEditorPage type="question" mode="create" />} />
-              <Route path="/learning/questions/:id" element={<LearningRecordDetailsPage type="question" />} />
-              <Route path="/learning/questions/:id/edit" element={<LearningRecordEditorPage type="question" mode="edit" />} />
-              <Route path="/learning/takeaways" element={<KeyTakeawaysPage />} />
-            </Route>
+          <Route path="/learning/questions" element={<LearningCollectionPage type="questions" />} />
+          <Route path="/learning/questions/new" element={<LearningRecordEditorPage type="question" mode="create" />} />
+          <Route path="/learning/questions/:id" element={<LearningRecordDetailsPage type="question" />} />
+          <Route path="/learning/questions/:id/edit" element={<LearningRecordEditorPage type="question" mode="edit" />} />
+          <Route path="/learning/takeaways" element={<KeyTakeawaysPage />} />
+        </Route>
 
-            <Route path="/notes" element={<NotesPage />} />
-            <Route path="/notes/new" element={<NotesPage />} />
-            <Route path="/notes/:id" element={<NotesPage />} />
-          </Route>
+        <Route path="/notes" element={<NotesPage />} />
+        <Route path="/notes/new" element={<NotesPage />} />
+        <Route path="/notes/:id" element={<NotesPage />} />
+        <Route path="/portfolio" element={<PortfolioLayout />}>
+          <Route index element={<PortfolioDashboard />} />
+          <Route path="projects" element={<PortfolioProjects />} />
+          <Route path="projects/new" element={<PortfolioProjectEditor />} />
+          <Route path="projects/add" element={<Navigate to="/portfolio/projects/new" replace />} />
+          <Route path="projects/:id/edit" element={<PortfolioProjectEditor />} />
+          <Route path="skills" element={<PortfolioSkills />} />
+          <Route path="experience" element={<PortfolioExperience />} />
+          <Route path="profile" element={<PortfolioProfile />} />
+          <Route path="contact" element={<PortfolioContact />} />
+          <Route path="preview" element={<PortfolioPreview />} />
+        </Route>
+      </Route>
 
-          <Route element={<AuthLayout />}>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/verify-email" element={<VerifyEmailPage />} />
-          </Route>
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+      </Route>
 
     </Route>,
   ),

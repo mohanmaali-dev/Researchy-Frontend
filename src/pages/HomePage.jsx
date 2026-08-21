@@ -5,6 +5,7 @@ import {
   FiCheckSquare,
   FiCompass,
   FiFileText,
+  FiGlobe,
   FiUsers,
 } from 'react-icons/fi'
 import { useState } from 'react'
@@ -56,6 +57,16 @@ const activeWorkAreas = [
     action: 'bg-[#f4f0fa] text-[#654b91] group-hover:bg-[#eee8f7]',
     hover: 'hover:border-[#b7a5d2]',
   },
+   {
+    name: 'Portfolio',
+    description: 'Manage projects, skills, experience, and your public profile.',
+    icon: FiGlobe,
+    to: '/portfolio',
+    color: 'bg-[#f7ead0] text-[#855816]',
+    accent: 'bg-[#b88435]',
+    action: 'bg-[#fbf2df] text-[#855816] group-hover:bg-[#f7ead0]',
+    hover: 'hover:border-[#cfad77]',
+  },
 ]
 
 const plannedWorkAreas = [
@@ -67,6 +78,12 @@ const plannedWorkAreas = [
   {
     name: 'Research',
     icon: FiCompass,
+    color: 'bg-[#e9e2f5] text-[#5c478c]',
+  },
+
+   {
+    name: 'Websites',
+    icon: FiGlobe,
     color: 'bg-[#e9e2f5] text-[#5c478c]',
   },
 ]
@@ -197,7 +214,7 @@ function HomePage() {
             </h2>
             <span className="text-[10px] text-[#999]">Select an area</span>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {activeWorkAreas.map(({ name, description, icon: Icon, to, color, accent, action, hover }) => (
               <Link
                 key={name}
